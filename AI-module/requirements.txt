@@ -1,0 +1,4 @@
+uvicorn
+fastapi
+deep-translator
+sentence-transformers
