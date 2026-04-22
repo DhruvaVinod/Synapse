@@ -21,7 +21,7 @@ function AdminLoginPage() {
         sessionStorage.setItem("isAdmin", "true");
         navigate("/admin/dashboard");
       }
-    } catch (err) {
+    } catch {
       setError("Incorrect password. Access denied.");
     } finally {
       setIsLoading(false);
@@ -35,19 +35,17 @@ function AdminLoginPage() {
           <div className="border-b border-slate-700 px-6 py-5 text-center">
             <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full border border-slate-600 bg-slate-800">
               <svg width="22" height="22" fill="none" stroke="#94a3b8" strokeWidth="1.5" viewBox="0 0 24 24">
-                <rect x="3" y="11" width="18" height="11" rx="2"/>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                <rect x="3" y="11" width="18" height="11" rx="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
               </svg>
             </div>
-            <h1 className="text-xl font-bold text-white">Admin Access</h1>
-            <p className="mt-1 text-sm text-slate-400">UrbanMind control panel</p>
+            <h1 className="text-xl font-bold text-white">NGO / Admin Access</h1>
+            <p className="mt-1 text-sm text-slate-400">Synapse coordination console</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4 p-6">
             <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-300">
-                Admin Password
-              </label>
+              <label className="mb-2 block text-sm font-semibold text-slate-300">Admin Password</label>
               <input
                 type="password"
                 value={password}
@@ -69,7 +67,7 @@ function AdminLoginPage() {
               disabled={isLoading || !password}
               className="w-full rounded-lg bg-[#1f4e79] py-3 text-sm font-semibold text-white transition hover:bg-[#173a5b] disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {isLoading ? "Verifying..." : "Enter Dashboard"}
+              {isLoading ? "Verifying..." : "Enter Coordination Dashboard"}
             </button>
           </form>
         </div>
