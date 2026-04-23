@@ -14,7 +14,6 @@ function AdminLoginPage() {
     e.preventDefault();
     setIsLoading(true);
     setError("");
-
     try {
       const res = await axios.post(`${API_BASE_URL}/api/admin/login`, { password });
       if (res.data.success) {
@@ -29,35 +28,54 @@ function AdminLoginPage() {
   };
 
   return (
-    <div className="flex min-h-[80vh] items-center justify-center">
-      <div className="w-full max-w-md">
-        <div className="rounded-2xl border border-slate-700 bg-slate-900 shadow-sm">
-          <div className="border-b border-slate-700 px-6 py-5 text-center">
-            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full border border-slate-600 bg-slate-800">
-              <svg width="22" height="22" fill="none" stroke="#94a3b8" strokeWidth="1.5" viewBox="0 0 24 24">
-                <rect x="3" y="11" width="18" height="11" rx="2" />
-                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-              </svg>
-            </div>
-            <h1 className="text-xl font-bold text-white">NGO / Admin Access</h1>
-            <p className="mt-1 text-sm text-slate-400">Synapse coordination console</p>
+    <div style={{ display: "flex", minHeight: "80vh", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ width: "100%", maxWidth: 420 }} className="animate-fade-up">
+        {/* Header above card */}
+        <div style={{ textAlign: "center", marginBottom: 28 }}>
+          <div style={{
+            width: 52, height: 52,
+            margin: "0 auto 16px",
+            background: "linear-gradient(135deg, #0f4c81, rgba(0,212,255,0.15))",
+            border: "1px solid rgba(0,212,255,0.35)",
+            borderRadius: 14,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            boxShadow: "0 0 24px rgba(0,212,255,0.2)",
+          }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" strokeWidth="1.8">
+              <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
           </div>
+          <h1 className="heading-display" style={{ fontSize: 24, marginBottom: 6 }}>Admin Access</h1>
+          <p style={{ fontSize: 13, color: "var(--text-muted)" }}>Synapse coordination console</p>
+        </div>
 
-          <form onSubmit={handleLogin} className="space-y-4 p-6">
+        <div className="syn-card">
+          <form onSubmit={handleLogin} style={{ padding: 28, display: "flex", flexDirection: "column", gap: 16 }}>
             <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-300">Admin Password</label>
+              <label className="syn-label">Admin Password</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter admin password"
-                className="w-full rounded-lg border border-slate-600 bg-slate-950 px-4 py-3 text-white outline-none transition placeholder:text-slate-500 focus:border-[#1f4e79] focus:ring-2 focus:ring-[#1f4e79]/20"
+                className="syn-input"
                 autoFocus
               />
             </div>
 
             {error && (
-              <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+              <div style={{
+                padding: "11px 14px",
+                background: "var(--red-dim)",
+                border: "1px solid rgba(255,77,106,0.3)",
+                borderRadius: "var(--radius-md)",
+                fontSize: 13,
+                color: "#ff7a8a",
+                display: "flex", alignItems: "center", gap: 8,
+              }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
                 {error}
               </div>
             )}
@@ -65,10 +83,29 @@ function AdminLoginPage() {
             <button
               type="submit"
               disabled={isLoading || !password}
-              className="w-full rounded-lg bg-[#1f4e79] py-3 text-sm font-semibold text-white transition hover:bg-[#173a5b] disabled:cursor-not-allowed disabled:opacity-60"
+              className="btn-primary"
+              style={{ width: "100%", justifyContent: "center", padding: "13px 24px", marginTop: 4 }}
             >
-              {isLoading ? "Verifying..." : "Enter Coordination Dashboard"}
+              {isLoading ? (
+                <>
+                  <svg style={{ animation: "spin 1s linear infinite" }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                  </svg>
+                  Verifying…
+                </>
+              ) : (
+                <>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
+                  Enter Coordination Dashboard
+                </>
+              )}
             </button>
+
+            <p style={{ textAlign: "center", fontSize: 11, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
+              RESTRICTED ACCESS · AUTHORIZED PERSONNEL ONLY
+            </p>
           </form>
         </div>
       </div>

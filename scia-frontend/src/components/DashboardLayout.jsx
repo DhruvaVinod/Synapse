@@ -3,9 +3,10 @@ import Sidebar from "./Sidebar";
 
 function DashboardLayout() {
   return (
-    <div className="min-h-screen bg-slate-950 text-white md:flex">
+    <div style={{ display: "flex", minHeight: "100vh", background: "var(--bg-base)" }}>
+      <div className="grid-overlay" />
       <Sidebar />
-      <main className="flex-1 p-4 md:p-8">
+      <main style={{ flex: 1, padding: "28px 32px", minWidth: 0, position: "relative", zIndex: 1 }}>
         <Outlet />
       </main>
     </div>

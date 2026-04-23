@@ -3,26 +3,21 @@ import { useEffect, useMemo, useState } from "react";
 const STORAGE_KEY = "synapse-volunteers";
 
 const SKILLS = [
-  "Medical",
-  "Logistics",
-  "Teaching",
-  "Rescue",
-  "Food Distribution",
-  "Counselling",
-  "Survey Collection",
-  "Driving",
+  "Medical", "Logistics", "Teaching", "Rescue",
+  "Food Distribution", "Counselling", "Survey Collection", "Driving",
 ];
-
 const AVAILABILITY = ["Weekdays", "Weekends", "Emergency Only", "Full Time", "Evenings"];
 
+const AVAIL_COLOR = {
+  "Full Time": "var(--green)",
+  "Weekdays": "var(--cyan)",
+  "Weekends": "var(--blue)",
+  "Emergency Only": "var(--red)",
+  "Evenings": "var(--amber)",
+};
+
 function VolunteerHubPage() {
-  const [form, setForm] = useState({
-    name: "",
-    contact: "",
-    location: "",
-    availability: AVAILABILITY[0],
-    skills: [],
-  });
+  const [form, setForm] = useState({ name: "", contact: "", location: "", availability: AVAILABILITY[0], skills: [] });
   const [volunteers, setVolunteers] = useState([]);
 
   useEffect(() => {
@@ -35,32 +30,19 @@ function VolunteerHubPage() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
   };
 
-  const toggleSkill = (skill) => {
+  const toggleSkill = (skill) =>
     setForm((prev) => ({
       ...prev,
-      skills: prev.skills.includes(skill)
-        ? prev.skills.filter((item) => item !== skill)
-        : [...prev.skills, skill],
+      skills: prev.skills.includes(skill) ? prev.skills.filter((s) => s !== skill) : [...prev.skills, skill],
     }));
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!form.name.trim() || !form.contact.trim() || !form.location.trim() || form.skills.length === 0) {
-      return;
-    }
-
+    if (!form.name.trim() || !form.contact.trim() || !form.location.trim() || form.skills.length === 0) return;
     const next = [
-      {
-        id: Date.now(),
-        ...form,
-        assignedTasks: Math.floor(Math.random() * 8),
-        completedTasks: Math.floor(Math.random() * 5),
-        rating: (4 + Math.random()).toFixed(1),
-      },
+      { id: Date.now(), ...form, assignedTasks: Math.floor(Math.random() * 8), completedTasks: Math.floor(Math.random() * 5), rating: (4 + Math.random()).toFixed(1) },
       ...volunteers,
     ];
-
     persist(next);
     setForm({ name: "", contact: "", location: "", availability: AVAILABILITY[0], skills: [] });
   };
@@ -69,157 +51,171 @@ function VolunteerHubPage() {
     const total = volunteers.length;
     const highlyAvailable = volunteers.filter((v) => ["Full Time", "Weekdays", "Weekends"].includes(v.availability)).length;
     const rescue = volunteers.filter((v) => v.skills.includes("Rescue") || v.skills.includes("Medical")).length;
-    const avgRating = total
-      ? (volunteers.reduce((sum, item) => sum + Number(item.rating || 0), 0) / total).toFixed(1)
-      : "0.0";
-
+    const avgRating = total ? (volunteers.reduce((sum, v) => sum + Number(v.rating || 0), 0) / total).toFixed(1) : "0.0";
     return { total, highlyAvailable, rescue, avgRating };
   }, [volunteers]);
 
+  const STAT_ITEMS = [
+    { label: "Registered Volunteers", value: stats.total, color: "var(--cyan)", icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> },
+    { label: "Ready for Deployment", value: stats.highlyAvailable, color: "var(--green)", icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><polyline points="20 6 9 17 4 12"/></svg> },
+    { label: "Rescue / Medical Pool", value: stats.rescue, color: "var(--red)", icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg> },
+    { label: "Avg Performance", value: stats.avgRating, color: "var(--amber)", icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> },
+  ];
+
   return (
-    <div className="space-y-6">
-      <div className="rounded-2xl border border-slate-700 bg-slate-900 p-6">
-        <h1 className="text-2xl font-bold text-white">Volunteer Hub</h1>
-        <p className="mt-2 max-w-3xl text-sm leading-7 text-slate-300">
-          Frontend-only volunteer module for Synapse. This does not touch your backend.
-          Registrations are stored in local browser storage and used across the Synapse UI for matching,
-          density, and coordination previews.
+    <div style={{ display: "flex", flexDirection: "column", gap: 24 }} className="animate-fade-up">
+      {/* Header */}
+      <div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+          <div className="live-dot" />
+          <span className="mono-label">Volunteer Operations</span>
+        </div>
+        <h1 className="page-title">Volunteer Hub</h1>
+        <p style={{ fontSize: 13, color: "var(--text-secondary)", marginTop: 6, maxWidth: 560, lineHeight: 1.6 }}>
+          Register, match, and track volunteers across active community needs. All data stored locally and surfaced across the Synapse UI.
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-4">
-        {[
-          ["Registered volunteers", stats.total],
-          ["Ready for deployment", stats.highlyAvailable],
-          ["Rescue / medical pool", stats.rescue],
-          ["Avg performance", stats.avgRating],
-        ].map(([label, value]) => (
-          <div key={label} className="rounded-xl border border-slate-700 bg-slate-900 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{label}</p>
-            <p className="mt-2 text-3xl font-bold text-white">{value}</p>
+      {/* Stats */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
+        {STAT_ITEMS.map((s) => (
+          <div key={s.label} className="stat-card">
+            <div className="stat-accent" style={{ background: s.color }} />
+            <div style={{ paddingLeft: 8 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                <div style={{ color: s.color, opacity: 0.8 }}>{s.icon}</div>
+                <span className="stat-label">{s.label}</span>
+              </div>
+              <div className="stat-value" style={{ color: s.color }}>{s.value}</div>
+            </div>
           </div>
         ))}
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-        <form onSubmit={handleSubmit} className="rounded-2xl border border-slate-700 bg-slate-900 p-6 space-y-5">
-          <div>
-            <h2 className="text-lg font-bold text-white">Volunteer Registration</h2>
-            <p className="mt-1 text-sm text-slate-400">Capture skills, availability, and location for matching.</p>
+      {/* Main grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "0.85fr 1.15fr", gap: 20 }}>
+        {/* Registration Form */}
+        <div className="syn-card" style={{ padding: 0 }}>
+          <div className="syn-card-header">
+            <div>
+              <div className="section-title" style={{ fontSize: 15 }}>Volunteer Registration</div>
+              <p style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4 }}>Capture skills, availability, and location for matching</p>
+            </div>
           </div>
+          <form onSubmit={handleSubmit} style={{ padding: 20, display: "flex", flexDirection: "column", gap: 14 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <div>
+                <label className="syn-label">Full Name</label>
+                <input value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} placeholder="Volunteer name" className="syn-input" />
+              </div>
+              <div>
+                <label className="syn-label">Contact</label>
+                <input value={form.contact} onChange={(e) => setForm((p) => ({ ...p, contact: e.target.value }))} placeholder="Phone or email" className="syn-input" />
+              </div>
+            </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <input
-              value={form.name}
-              onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
-              placeholder="Volunteer name"
-              className="rounded-lg border border-slate-600 bg-slate-950 px-4 py-3 text-white outline-none focus:border-[#1f4e79]"
-            />
-            <input
-              value={form.contact}
-              onChange={(e) => setForm((prev) => ({ ...prev, contact: e.target.value }))}
-              placeholder="Phone or email"
-              className="rounded-lg border border-slate-600 bg-slate-950 px-4 py-3 text-white outline-none focus:border-[#1f4e79]"
-            />
-          </div>
+            <div>
+              <label className="syn-label">Base Location</label>
+              <input value={form.location} onChange={(e) => setForm((p) => ({ ...p, location: e.target.value }))} placeholder="Area, district, or city" className="syn-input" />
+            </div>
 
-          <input
-            value={form.location}
-            onChange={(e) => setForm((prev) => ({ ...prev, location: e.target.value }))}
-            placeholder="Base location / area"
-            className="w-full rounded-lg border border-slate-600 bg-slate-950 px-4 py-3 text-white outline-none focus:border-[#1f4e79]"
-          />
-
-          <select
-            value={form.availability}
-            onChange={(e) => setForm((prev) => ({ ...prev, availability: e.target.value }))}
-            className="w-full rounded-lg border border-slate-600 bg-slate-950 px-4 py-3 text-white outline-none focus:border-[#1f4e79]"
-          >
-            {AVAILABILITY.map((item) => (
-              <option key={item} value={item}>{item}</option>
-            ))}
-          </select>
-
-          <div>
-            <p className="mb-3 text-sm font-semibold text-slate-200">Skills</p>
-            <div className="flex flex-wrap gap-2">
-              {SKILLS.map((skill) => {
-                const active = form.skills.includes(skill);
-                return (
+            <div>
+              <label className="syn-label">Availability</label>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 6 }}>
+                {AVAILABILITY.map((av) => (
                   <button
-                    key={skill}
-                    type="button"
-                    onClick={() => toggleSkill(skill)}
-                    className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
-                      active
-                        ? "border-blue-500/40 bg-blue-500/20 text-blue-200"
-                        : "border-slate-600 bg-slate-950 text-slate-300 hover:bg-slate-800"
-                    }`}
+                    key={av} type="button"
+                    onClick={() => setForm((p) => ({ ...p, availability: av }))}
+                    className={`filter-pill${form.availability === av ? " active" : ""}`}
                   >
+                    {av}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="syn-label">Skills</label>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 6 }}>
+                {SKILLS.map((skill) => (
+                  <button key={skill} type="button" onClick={() => toggleSkill(skill)} className={`skill-chip${form.skills.includes(skill) ? " selected" : ""}`}>
                     {skill}
                   </button>
-                );
-              })}
+                ))}
+              </div>
             </div>
+
+            <button
+              type="submit"
+              className="btn-primary"
+              style={{ marginTop: 4, justifyContent: "center" }}
+              disabled={!form.name.trim() || !form.contact.trim() || !form.location.trim() || form.skills.length === 0}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Save Volunteer
+            </button>
+          </form>
+        </div>
+
+        {/* Volunteer List */}
+        <div className="syn-card" style={{ padding: 0 }}>
+          <div className="syn-card-header">
+            <div className="section-title" style={{ fontSize: 15 }}>Volunteer Dashboard</div>
+            <span className="badge badge-cyan">{volunteers.length} registered</span>
           </div>
 
-          <button
-            type="submit"
-            className="rounded-lg bg-[#1f4e79] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#173a5b]"
-          >
-            Save Volunteer
-          </button>
-        </form>
-
-        <div className="rounded-2xl border border-slate-700 bg-slate-900 p-6">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <h2 className="text-lg font-bold text-white">Volunteer Dashboard</h2>
-              <p className="mt-1 text-sm text-slate-400">Assigned tasks, readiness, and nearby-need readiness preview.</p>
-            </div>
-          </div>
-
-          <div className="mt-5 space-y-3">
+          <div style={{ padding: "16px", maxHeight: 600, overflowY: "auto", display: "flex", flexDirection: "column", gap: 10 }}>
             {volunteers.length === 0 && (
-              <div className="rounded-xl border border-dashed border-slate-700 bg-slate-950 p-5 text-sm text-slate-400">
-                No volunteers registered yet. Add one to activate the volunteer layer in the UI.
+              <div style={{
+                padding: 32, textAlign: "center",
+                border: "1px dashed var(--border-subtle)", borderRadius: "var(--radius-md)",
+              }}>
+                <div style={{ fontSize: 28, marginBottom: 10 }}>👥</div>
+                <p style={{ fontSize: 13, color: "var(--text-muted)" }}>No volunteers registered yet.</p>
+                <p style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4 }}>Add one to activate the volunteer layer.</p>
               </div>
             )}
 
-            {volunteers.map((volunteer) => (
-              <div key={volunteer.id} className="rounded-xl border border-slate-700 bg-slate-950 p-4">
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div>
-                    <h3 className="text-base font-bold text-white">{volunteer.name}</h3>
-                    <p className="mt-1 text-xs text-slate-400">{volunteer.contact} · {volunteer.location}</p>
-                  </div>
-                  <div className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-300">
-                    {volunteer.availability}
-                  </div>
-                </div>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {volunteer.skills.map((skill) => (
-                    <span key={skill} className="rounded-full border border-slate-700 bg-slate-900 px-2.5 py-1 text-[11px] text-slate-300">
-                      {skill}
+            {volunteers.map((vol) => {
+              const avColor = AVAIL_COLOR[vol.availability] || "var(--text-secondary)";
+              return (
+                <div key={vol.id} className="volunteer-card">
+                  <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 10 }}>
+                    <div>
+                      <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 14, color: "var(--text-primary)" }}>{vol.name}</div>
+                      <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 2 }}>{vol.contact} · {vol.location}</div>
+                    </div>
+                    <span style={{
+                      display: "inline-flex", alignItems: "center", padding: "3px 10px",
+                      borderRadius: 100, fontSize: 10, fontWeight: 700,
+                      fontFamily: "var(--font-mono)", border: `1px solid ${avColor}40`,
+                      background: `${avColor}10`, color: avColor, whiteSpace: "nowrap",
+                    }}>
+                      {vol.availability}
                     </span>
-                  ))}
+                  </div>
+
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 12 }}>
+                    {vol.skills.map((skill) => (
+                      <span key={skill} className="syn-tag">{skill}</span>
+                    ))}
+                  </div>
+
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+                    {[
+                      { label: "Assigned", value: vol.assignedTasks, color: "var(--cyan)" },
+                      { label: "Completed", value: vol.completedTasks, color: "var(--green)" },
+                      { label: "Rating", value: `${vol.rating}/5`, color: "var(--amber)" },
+                    ].map((m) => (
+                      <div key={m.label} style={{ background: "var(--bg-base)", border: "1px solid var(--border-subtle)", borderRadius: 8, padding: "8px 10px" }}>
+                        <div style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 4 }}>{m.label}</div>
+                        <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 16, color: m.color }}>{m.value}</div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <div className="mt-4 grid gap-3 md:grid-cols-3">
-                  <div className="rounded-lg border border-slate-700 bg-slate-900 p-3">
-                    <p className="text-[11px] uppercase tracking-wide text-slate-500">Assigned tasks</p>
-                    <p className="mt-1 text-lg font-bold text-white">{volunteer.assignedTasks}</p>
-                  </div>
-                  <div className="rounded-lg border border-slate-700 bg-slate-900 p-3">
-                    <p className="text-[11px] uppercase tracking-wide text-slate-500">Completed</p>
-                    <p className="mt-1 text-lg font-bold text-white">{volunteer.completedTasks}</p>
-                  </div>
-                  <div className="rounded-lg border border-slate-700 bg-slate-900 p-3">
-                    <p className="text-[11px] uppercase tracking-wide text-slate-500">Performance</p>
-                    <p className="mt-1 text-lg font-bold text-white">{volunteer.rating}/5</p>
-                  </div>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
