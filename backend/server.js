@@ -1,21 +1,46 @@
-const express = require('express');
+require('dns').setDefaultResultOrder('ipv4first');
+const express    = require('express');
+const http       = require('http');
+const { Server } = require('socket.io');
 const bodyParser = require('body-parser');
-const cors = require('cors');
-const routes = require('./routes');
-const mongoose = require('mongoose');   // ADD THIS
-require('dotenv').config();   
+const cors       = require('cors');
+const routes     = require('./routes');
+const alertService = require('./alertService');
+require('dotenv').config();
 
-const app = express();
+const app    = express();
+const server = http.createServer(app);
+const io     = new Server(server, {
+  cors: { origin: '*', methods: ['GET', 'POST'] },
+});
+
 const PORT = process.env.PORT || 5000;
 
-mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/urbanmind')
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.error('MongoDB error:', err));
-
+// ── Middleware ────────────────────────────────────────────────────
 app.use(cors());
 app.use(bodyParser.json());
-app.use('/api', routes); // Prefixes all routes with /api
+app.use('/api', routes);
 
-app.listen(PORT, () => {
-    console.log(` SCIA Backend running on http://localhost:${PORT}`);
-});
+// ── Real-time alerts ──────────────────────────────────────────────
+alertService.init(io);
+
+const mongoose = require("mongoose");
+
+async function startServer() {
+  try {
+    console.log("Trying MongoDB connection...");
+
+    await mongoose.connect(process.env.MONGO_URI);
+
+    console.log("MongoDB connected SUCCESSFULLY");
+
+    server.listen(PORT, () => {
+      console.log(`Synapse backend running on http://localhost:${PORT}`);
+    });
+
+  } catch (err) {
+    console.error("DB CONNECTION ERROR:", err.message);
+  }
+}
+
+startServer();
