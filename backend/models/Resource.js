@@ -3,18 +3,21 @@ const mongoose = require('mongoose');
 
 const resourceSchema = new mongoose.Schema(
   {
-    type:     { type: String, enum: ['food', 'medicine', 'vehicle', 'funds', 'other'], required: true },
-    name:     { type: String, required: true },   // e.g. "Rice bags", "Ambulance"
+    // UPDATED: Added more types to match AI predictions
+    type: { 
+      type: String, 
+      enum: ['food', 'medicine', 'vehicle', 'funds', 'other', 'equipment', 'team'], 
+      required: true 
+    },
+    name:     { type: String, required: true },
     quantity: { type: Number, default: 0 },
-    unit:     { type: String, default: 'units' }, // kg, litres, count, ₹
+    unit:     { type: String, default: 'units' },
 
     location: { type: String, default: 'Unknown' },
     lat:      { type: Number },
     lng:      { type: Number },
 
-    available: { type: Boolean, default: true },
-
-    // Which need this resource is currently allocated to (null = free)
+    available:   { type: Boolean, default: true },
     allocatedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'Need', default: null },
   },
   { timestamps: true }

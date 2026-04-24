@@ -1,14 +1,15 @@
-// controller.js  –  Synapse (upgraded from UrbanMind)
+// controller.js  –  Synapse
 const Need      = require('./models/Need');
 const Volunteer = require('./models/Volunteer');
 const Resource  = require('./models/Resource');
 const axios     = require('axios');
 const { translateText }    = require('./translationService');
-const { matchVolunteers }  = require('./matchingService');
+
+// REMOVED matchingService import - AI handles this now!
 const { notifyAdminsUrgent, notifyVolunteer } = require('./alertService');
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SEED  (kept from UrbanMind — runs once on startup)
+// SEED
 // ─────────────────────────────────────────────────────────────────────────────
 const seedCSV = async () => {
   const count = await Need.countDocuments();
@@ -27,9 +28,9 @@ const seedCSV = async () => {
       rows.push({
         text,
         needType,
-        category: needType,                                           // mirror
+        category: needType,
         urgencyScore: /urgent|emergency|fire/i.test(text) ? 'High' : 'Medium',
-        priority:     /urgent|emergency|fire/i.test(text) ? 'High' : 'Medium', // mirror
+        priority:     /urgent|emergency|fire/i.test(text) ? 'High' : 'Medium',
         status: 'Completed',
         lat: 28.6 + (Math.random() - 0.5) * 0.1,
         lng: 77.2 + (Math.random() - 0.5) * 0.1,
@@ -44,7 +45,7 @@ const seedCSV = async () => {
 seedCSV();
 
 // ─────────────────────────────────────────────────────────────────────────────
-// NEEDS  (replaces Complaints)
+// NEEDS
 // ─────────────────────────────────────────────────────────────────────────────
 
 exports.getAllNeeds = async (req, res) => {
@@ -59,7 +60,7 @@ exports.createNeed = async (req, res) => {
   const {
     text, location, citizenName,
     lat, lng, originalLang,
-    reporterType,               // 'citizen' | 'ngo' | 'survey' | 'bulk'
+    reporterType,
     resourcesRequired,
   } = req.body;
 
@@ -73,13 +74,26 @@ exports.createNeed = async (req, res) => {
     console.log(`✅ Translated: "${englishText}"`);
   }
 
-  // 2. AI classification
-  let needType = 'General', urgencyScore = 'Low';
+  // 2. AI classification & Volunteer Matching
+  let needType = 'General', urgencyScore = 'Low', aiResources = "General", aiMatches = [];
+  const safeLat = lat || 28.6139;
+  const safeLng = lng || 77.2090;
+
   try {
-    const mlRes = await axios.post('http://127.0.0.1:8000/predict', { text: englishText });
+    // Send text AND coordinates to the Python AI Module
+    const mlRes = await axios.post('http://127.0.0.1:8000/predict', { 
+        text: englishText,
+        lat: safeLat,
+        lng: safeLng
+    });
+    
     needType     = mlRes.data.prediction.predicted_department;
     urgencyScore = mlRes.data.prediction.priority_level;
-  } catch {
+    aiResources  = mlRes.data.prediction.resources_needed;
+    aiMatches    = mlRes.data.prediction.recommended_volunteers;
+    
+  } catch (err) {
+    console.error("⚠️ AI Module unreachable, using fallbacks:", err.message);
     // Fallback rules
     if      (/water|leak|pipe/i.test(englishText))                                             needType = 'Water';
     else if (/light|power|electric|current/i.test(englishText))                               needType = 'Electricity';
@@ -98,25 +112,31 @@ exports.createNeed = async (req, res) => {
     originalText: originalLang && originalLang !== 'en' ? text : null,
     originalLang: originalLang || 'en',
     needType,
-    category:     needType,       // mirror for frontend compatibility
+    category:     needType,
     urgencyScore,
-    priority:     urgencyScore === 'Critical' ? 'High' : urgencyScore, // mirror
+    priority:     urgencyScore === 'Critical' ? 'High' : urgencyScore,
     location:     location   || 'Unknown',
     citizenName:  citizenName || 'Anonymous',
-    reporterType: reporterType || 'citizen',
+    reporterType: reporterType === "citizen report" ? "citizen" : (reporterType || "citizen"),
     status:       'Detected',
-    lat:          lat || 28.6139,
-    lng:          lng || 77.2090,
-    resourcesRequired: resourcesRequired || [],
+    lat:          safeLat,
+    lng:          safeLng,
+    resourcesRequired: resourcesRequired || [], // Save the AI suggested resources
   });
 
   // 4. Real-time alert to admins if urgent
   notifyAdminsUrgent(need);
 
-  res.status(201).json({ ...need.toObject(), id: need._id });
+  // Return the created need PLUS the AI's instant volunteer recommendations
+  // THE FIX: Add aiSuggestedResources to the output
+  res.status(201).json({ 
+      ...need.toObject(), 
+      id: need._id, 
+      suggestedVolunteers: aiMatches,
+      aiSuggestedResources: aiResources 
+  });
 };
 
-// Track a single need by reference (_id)
 exports.getNeedById = async (req, res) => {
   const need = await Need.findById(req.params.id)
     .populate('assignedVolunteers', 'name skills phone')
@@ -125,7 +145,6 @@ exports.getNeedById = async (req, res) => {
   res.json({ ...need, id: need._id });
 };
 
-// Admin: update status / reply
 exports.updateNeed = async (req, res) => {
   const { adminReply, status } = req.body;
   const update = {};
@@ -180,10 +199,9 @@ exports.toggleVolunteerAvailability = async (req, res) => {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// COORDINATION  (matching + assignment)
+// COORDINATION  (AI Driven Matching)
 // ─────────────────────────────────────────────────────────────────────────────
 
-// GET /api/coordination/needs  –  all active needs + their volunteers
 exports.getCoordinationNeeds = async (req, res) => {
   const needs = await Need.find({ status: { $ne: 'Completed' } })
     .sort({ createdAt: -1 })
@@ -192,16 +210,27 @@ exports.getCoordinationNeeds = async (req, res) => {
   res.json(needs.map((n) => ({ ...n, id: n._id })));
 };
 
-// GET /api/coordination/match/:needId  –  ranked volunteer suggestions
 exports.getMatchSuggestions = async (req, res) => {
   const need = await Need.findById(req.params.needId).lean();
   if (!need) return res.status(404).json({ error: 'Need not found' });
 
-  const matches = await matchVolunteers(need);
-  res.json({ needId: need._id, matches });
+  try {
+      // Ask the Python AI for live match suggestions based on the saved need
+      const mlRes = await axios.post('http://127.0.0.1:8000/predict', { 
+          text: need.originalLang === 'en' ? need.text : (need.originalText || need.text),
+          lat: need.lat,
+          lng: need.lng
+      });
+      
+      const matches = mlRes.data.prediction.recommended_volunteers;
+      res.json({ needId: need._id, matches });
+      
+  } catch (err) {
+      console.error("⚠️ AI Matcher unreachable:", err.message);
+      res.status(500).json({ error: 'AI matching service is currently down.' });
+  }
 };
 
-// POST /api/coordination/assign  –  assign volunteer(s) to a need
 exports.assignVolunteers = async (req, res) => {
   const { needId, volunteerIds } = req.body;
   if (!needId || !volunteerIds?.length)
@@ -210,14 +239,12 @@ exports.assignVolunteers = async (req, res) => {
   const need = await Need.findById(needId);
   if (!need) return res.status(404).json({ error: 'Need not found' });
 
-  // Add volunteers (avoid duplicates)
   const existing = need.assignedVolunteers.map(String);
   const toAdd    = volunteerIds.filter((id) => !existing.includes(String(id)));
   need.assignedVolunteers.push(...toAdd);
   need.status = 'Assigned';
   await need.save();
 
-  // Update each volunteer's assignedNeeds + notify
   for (const vid of toAdd) {
     await Volunteer.findByIdAndUpdate(vid, { $addToSet: { assignedNeeds: needId } });
     notifyVolunteer(vid, need);
@@ -258,7 +285,7 @@ exports.allocateResource = async (req, res) => {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// IMPACT METRICS  (Admin dashboard stats)
+// IMPACT METRICS
 // ─────────────────────────────────────────────────────────────────────────────
 
 exports.getStats = async (req, res) => {
@@ -272,10 +299,9 @@ exports.getStats = async (req, res) => {
   const assigned  = needs.filter((n) => n.status === 'Assigned').length;
   const inProgress = needs.filter((n) => n.status === 'In Progress').length;
 
-  // Avg response time (Detected → Assigned)
   const responseTimes = needs
     .filter((n) => n.status !== 'Detected' && n.updatedAt && n.createdAt)
-    .map((n) => (new Date(n.updatedAt) - new Date(n.createdAt)) / 60000); // minutes
+    .map((n) => (new Date(n.updatedAt) - new Date(n.createdAt)) / 60000); 
   const avgResponseMin = responseTimes.length
     ? Math.round(responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length)
     : 0;
@@ -304,10 +330,6 @@ exports.getStats = async (req, res) => {
     },
   });
 };
-
-// ─────────────────────────────────────────────────────────────────────────────
-// ADMIN AUTH  (unchanged)
-// ─────────────────────────────────────────────────────────────────────────────
 
 exports.adminLogin = (req, res) => {
   const { password } = req.body;

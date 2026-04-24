@@ -1,50 +1,43 @@
-// models/Need.js  (replaces Complaint.js)
+// models/Need.js
 const mongoose = require('mongoose');
 
 const needSchema = new mongoose.Schema(
   {
-    // ── Text content ──────────────────────────────────────────────
-    text:         { type: String, required: true },   // English (used for AI)
-    originalText: { type: String, default: null },    // user's regional language text
-    originalLang: { type: String, default: 'en' },    // ISO 639-1 code e.g. "hi"
+    text:         { type: String, required: true },
+    originalText: { type: String, default: null },
+    originalLang: { type: String, default: 'en' },
 
-    // ── AI Classification ─────────────────────────────────────────
-    // "category" kept as alias so old frontend references don't break
-    needType:  { type: String, default: 'General' },  // Health, Food, Disaster, etc.
-    category:  { type: String, default: 'General' },  // mirror of needType
+    needType:  { type: String, default: 'General' },
+    category:  { type: String, default: 'General' },
 
-    // "priority" kept as alias; urgencyScore is the canonical field
+    // UPDATED: Added 'Critical' to priority enum to match AI output
     urgencyScore: { type: String, enum: ['Critical', 'High', 'Medium', 'Low'], default: 'Medium' },
-    priority:     { type: String, enum: ['High', 'Medium', 'Low'], default: 'Medium' }, // mirror
+    priority:     { type: String, enum: ['Critical', 'High', 'Medium', 'Low'], default: 'Medium' },
 
-    // ── Location ──────────────────────────────────────────────────
     location: { type: String, default: 'Unknown' },
     lat:      { type: Number },
     lng:      { type: Number },
 
-    // ── Reporter ──────────────────────────────────────────────────
     citizenName:  { type: String, default: 'Anonymous' },
-    reporterType: { type: String, enum: ['citizen', 'ngo', 'survey', 'bulk'], default: 'citizen' },
+    // UPDATED: Added 'citizen report' and others to match frontend input sources
+    reporterType: { 
+      type: String, 
+      enum: ['citizen', 'ngo', 'survey', 'bulk', 'citizen report', 'ngo field report', 'survey upload', 'bulk ingestion'], 
+      default: 'citizen' 
+    },
 
-    // ── Action Status (replaces Pending/Resolved) ─────────────────
     status: {
       type: String,
       enum: ['Detected', 'Assigned', 'In Progress', 'Completed'],
       default: 'Detected',
     },
 
-    // ── Volunteer Assignment ───────────────────────────────────────
     assignedVolunteers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Volunteer' }],
 
-    // ── Resources needed ──────────────────────────────────────────
-    resourcesRequired: [
-      {
-        type:     { type: String },  // 'food', 'medicine', 'vehicle', 'funds'
-        quantity: { type: Number, default: 1 },
-      },
-    ],
+    // UPDATED: Changed to mixed/flexible type. 
+    // The AI returns a raw string of resources, while the frontend might send an array.
+    resourcesRequired: { type: mongoose.Schema.Types.Mixed, default: [] },
 
-    // ── Admin ─────────────────────────────────────────────────────
     adminReply: { type: String, default: '' },
     closedAt:   { type: Date, default: null },
   },

@@ -144,23 +144,39 @@ function RegisterComplaintPage() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!form.complaintText.trim()) { setError("Please describe the community need."); return; }
-    if (!selectedLocation) { setError("Please select a location from the dropdown."); return; }
-    setError(""); setIsSubmitting(true);
-    try {
-      const payload = {
-        text: form.complaintText, location: selectedLocation.label,
-        lat: selectedLocation.lat, lng: selectedLocation.lng,
-        category: predictedNeedType, priority: predictedUrgency,
-        source, impactCount, language: selectedLang.isoCode,
-      };
-      const res = await axios.post(`${API_BASE_URL}/api/complaints`, payload);
-      setSubmitResult({ ...res.data, id: String(res.data._id || res.data.id).slice(-6), priority: predictedUrgency, predictedNeedType, predictedResources, displayText: form.complaintText, source, impactCount });
-      setForm({ complaintText: "", locationName: "" }); setLocationInput(""); setSelectedLocation(null); setImpactCount("");
-    } catch { setError("Failed to submit. Please try again."); }
-    finally { setIsSubmitting(false); }
-  };
+  e.preventDefault();
+  if (!form.complaintText.trim() || !selectedLocation) return;
+
+  setIsSubmitting(true);
+  try {
+    const payload = {
+      text: form.complaintText,
+      location: selectedLocation.label,
+      lat: selectedLocation.lat, // Crucial for AI proximity matching
+      lng: selectedLocation.lng,
+      originalLang: selectedLang.isoCode, // Triggers translation in backend
+      reporterType: source.toLowerCase(),
+    };
+
+    // This hits your Node.js backend, which then calls the Python AI
+    const res = await axios.post(`${API_BASE_URL}/api/needs`, payload);
+    
+    // The response now contains AI-calculated volunteers and resources
+    setSubmitResult({
+      ...res.data,
+      id: res.data.id.slice(-6),
+      // Use the AI's predicted values returned from the backend
+      priority: res.data.priority_level,
+      predictedNeedType: res.data.predicted_department,
+      predictedResources: [res.data.aiSuggestedResources],
+      suggestedVolunteers: res.data.suggestedVolunteers
+    });
+  } catch (err) {
+    setError("Integration Error: Ensure both Node and Python servers are running.");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   const clearForm = () => { setForm({ complaintText: "", locationName: "" }); setLocationInput(""); setSelectedLocation(null); setImpactCount(""); setError(""); setSubmitResult(null); };
 

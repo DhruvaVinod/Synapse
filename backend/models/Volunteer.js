@@ -7,24 +7,23 @@ const volunteerSchema = new mongoose.Schema(
     email:        { type: String, default: '' },
     phone:        { type: String, default: '' },
 
-    // Skills used by the matching engine
+    // UPDATED: Expanded enum to match AI search keywords (e.g., 'first_aid', 'technical')
     skills: [
       {
         type: String,
-        enum: ['medical', 'logistics', 'teaching', 'rescue', 'counseling', 'food', 'technical', 'general'],
+        enum: [
+          'medical', 'logistics', 'teaching', 'rescue', 'counseling', 
+          'food', 'technical', 'general', 'first_aid', 'medical_aid', 'driving'
+        ],
       },
     ],
 
     availability: { type: Boolean, default: true },
+    location:     { type: String, default: 'Unknown' },
+    lat:          { type: Number },
+    lng:          { type: Number },
 
-    location: { type: String, default: 'Unknown' },
-    lat:      { type: Number },
-    lng:      { type: Number },
-
-    // Tasks this volunteer is assigned to
     assignedNeeds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Need' }],
-
-    // Simple performance tracking
     tasksCompleted: { type: Number, default: 0 },
   },
   { timestamps: true }

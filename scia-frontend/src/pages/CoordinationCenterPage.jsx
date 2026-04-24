@@ -1,199 +1,161 @@
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
+import { io } from "socket.io-client"; // Ensure socket.io-client is installed
 
 const API_BASE_URL = "http://localhost:5000";
-const VOLUNTEER_KEY = "synapse-volunteers";
-const RESOURCE_KEY = "synapse-resources";
-
-const INITIAL_RESOURCES = [
-  { id: 1, name: "Food Kits", available: 120, location: "Central Warehouse", usage: 38, color: "var(--amber)" },
-  { id: 2, name: "Medicines", available: 64, location: "Clinic Storage", usage: 21, color: "var(--red)" },
-  { id: 3, name: "Vehicles", available: 8, location: "Transport Yard", usage: 5, color: "var(--cyan)" },
-  { id: 4, name: "Relief Funds", available: 250000, location: "Emergency Pool", usage: 92000, color: "var(--green)" },
-];
-
-const NEED_KEYWORDS = {
-  Health: ["Medicines", "Vehicles"],
-  Sanitation: ["Food Kits"],
-  Water: ["Vehicles"],
-  Electricity: ["Vehicles"],
-  Roads: ["Vehicles"],
-  General: ["Food Kits", "Relief Funds"],
-};
 
 function CoordinationCenterPage() {
   const [needs, setNeeds] = useState([]);
   const [volunteers, setVolunteers] = useState([]);
   const [resources, setResources] = useState([]);
+  const [selectedNeedMatches, setSelectedNeedMatches] = useState({ id: null, matches: [] });
+  const [isMatching, setIsMatching] = useState(false);
 
+  // 1. Initialize Real-Time Alerts (Socket.io)
   useEffect(() => {
-    const savedVols = JSON.parse(localStorage.getItem(VOLUNTEER_KEY) || "[]");
-    setVolunteers(Array.isArray(savedVols) ? savedVols : []);
-    const savedRes = JSON.parse(localStorage.getItem(RESOURCE_KEY) || "null");
-    if (Array.isArray(savedRes) && savedRes.length > 0) {
-      setResources(savedRes.map((r, i) => ({ ...r, color: INITIAL_RESOURCES[i]?.color || "var(--cyan)" })));
-    } else {
-      localStorage.setItem(RESOURCE_KEY, JSON.stringify(INITIAL_RESOURCES));
-      setResources(INITIAL_RESOURCES);
-    }
-  }, []);
+    const socket = io(API_BASE_URL);
 
-  useEffect(() => {
-    const fetchNeeds = async () => {
-      try {
-        const res = await axios.get(`${API_BASE_URL}/api/complaints`);
-        setNeeds(Array.isArray(res.data) ? res.data : []);
-      } catch { setNeeds([]); }
-    };
-    fetchNeeds();
-    const id = setInterval(fetchNeeds, 15000);
-    return () => clearInterval(id);
-  }, []);
-
-  const alerts = useMemo(() =>
-    needs.filter((item) => item.priority === "High" || item.status === "Pending").slice(0, 6)
-      .map((item) => ({
-        id: String(item._id || item.id), title: item.category || "Community Need",
-        text: item.text, location: item.location,
-        level: item.priority === "High" ? "Urgent" : "Watch",
-        isUrgent: item.priority === "High",
-      })), [needs]);
-
-  const resourceSuggestions = useMemo(() => {
-    const counter = {};
-    needs.forEach((item) => {
-      const names = NEED_KEYWORDS[item.category] || ["Food Kits"];
-      names.forEach((name) => { counter[name] = (counter[name] || 0) + (item.priority === "High" ? 3 : item.priority === "Medium" ? 2 : 1); });
+    socket.on("connect", () => {
+      // Join the admin room to receive high-urgency broadcasts
+      socket.emit("join", { role: "admin" });
     });
-    return Object.entries(counter).sort((a, b) => b[1] - a[1]).slice(0, 4);
-  }, [needs]);
 
-  const STATS = [
-    { label: "Active Alerts", value: alerts.length, color: "var(--red)", icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
-    { label: "Tracked Resources", value: resources.length, color: "var(--cyan)", icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg> },
-    { label: "Volunteer Pool", value: volunteers.length, color: "var(--green)", icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> },
-    { label: "High Priority Needs", value: needs.filter(n => n.priority === "High").length, color: "var(--amber)", icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> },
-  ];
+    socket.on("urgentNeed", (newNeed) => {
+      // Instantly add the AI-flagged critical need to the top of the UI
+      setNeeds((prev) => [newNeed, ...prev]);
+    });
+
+    return () => socket.disconnect();
+  }, []);
+
+  // 2. Initial Data Fetch
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [needsRes, volsRes, resRes] = await Promise.all([
+          axios.get(`${API_BASE_URL}/api/needs`),
+          axios.get(`${API_BASE_URL}/api/volunteers`),
+          axios.get(`${API_BASE_URL}/api/resources`)
+        ]);
+        setNeeds(needsRes.data);
+        setVolunteers(volsRes.data);
+        setResources(resRes.data);
+      } catch (err) {
+        console.error("Data fetch failed", err);
+      }
+    };
+    fetchData();
+  }, []);
+
+  // 3. Fetch AI-Driven Hybrid Matches for a specific need
+  const handleGetAiMatches = async (needId) => {
+    setIsMatching(true);
+    try {
+      // This calls the Node.js controller, which requests matches from Python
+      const res = await axios.get(`${API_BASE_URL}/api/coordination/match/${needId}`);
+      setSelectedNeedMatches({ id: needId, matches: res.data.matches });
+    } catch (err) {
+      console.error("AI Matcher error", err);
+    } finally {
+      setIsMatching(false);
+    }
+  };
+
+  const stats = useMemo(() => ([
+    { label: "Active Alerts", value: needs.filter(n => n.status !== 'Completed').length, color: "var(--red)" },
+    { label: "High Urgency", value: needs.filter(n => n.urgencyScore === 'High' || n.urgencyScore === 'Critical').length, color: "var(--amber)" },
+    { label: "Volunteers", value: volunteers.length, color: "var(--cyan)" },
+    { label: "Available Resources", value: resources.filter(r => r.available).length, color: "var(--green)" }
+  ]), [needs, volunteers, resources]);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 24 }} className="animate-fade-up">
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-            <div className="live-dot" />
-            <span className="mono-label">Live · Refreshes every 15s</span>
-          </div>
-          <h1 className="page-title">Resource & Alerts Center</h1>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 14px", background: "var(--bg-layer2)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-md)" }}>
+      <div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
           <div className="live-dot" />
-          <span style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-muted)" }}>FEED ONLINE</span>
+          <span className="mono-label">Synapse AI Operations Center</span>
         </div>
+        <h1 className="page-title">Resource & Coordination Center</h1>
       </div>
 
-      {/* Stats */}
+      {/* Stats Bar */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
-        {STATS.map((s) => (
+        {stats.map((s) => (
           <div key={s.label} className="stat-card">
             <div className="stat-accent" style={{ background: s.color }} />
-            <div style={{ paddingLeft: 8 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                <div style={{ color: s.color }}>{s.icon}</div>
-                <span className="stat-label">{s.label}</span>
-              </div>
-              <div className="stat-value" style={{ color: s.color }}>{s.value}</div>
-            </div>
+            <span className="stat-label">{s.label}</span>
+            <div className="stat-value" style={{ color: s.color }}>{s.value}</div>
           </div>
         ))}
       </div>
 
-      {/* Main grid */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-        {/* Resources */}
+        
+        {/* Active Needs & AI Matcher Hub */}
         <div className="syn-card" style={{ padding: 0 }}>
           <div className="syn-card-header">
-            <div className="section-title" style={{ fontSize: 15 }}>Resource Layer</div>
-            <span className="badge badge-cyan">{resources.length} items</span>
+            <div className="section-title">Active Response Queue</div>
           </div>
           <div style={{ padding: 16, display: "flex", flexDirection: "column", gap: 12 }}>
-            {resources.map((res) => {
-              const pct = Math.min(100, (res.usage / Math.max(res.available, 1)) * 100);
-              return (
-                <div key={res.id} className="resource-card">
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
-                    <div>
-                      <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 14, color: "var(--text-primary)" }}>{res.name}</div>
-                      <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 2 }}>{res.location}</div>
-                    </div>
-                    <div style={{ textAlign: "right" }}>
-                      <div style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: 18, color: res.color || "var(--cyan)" }}>{res.available.toLocaleString()}</div>
-                      <div style={{ fontSize: 9, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.1em" }}>available</div>
-                    </div>
-                  </div>
-                  <div className="progress-bar">
-                    <div className="progress-fill" style={{ width: `${pct}%`, background: `linear-gradient(90deg, ${res.color || "var(--cyan)"}, ${res.color || "var(--cyan)"}88)` }} />
-                  </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8 }}>
-                    <span style={{ fontSize: 11, color: "var(--text-muted)" }}>Used: {res.usage.toLocaleString()}</span>
-                    <span style={{ fontSize: 11, color: res.color || "var(--cyan)", fontFamily: "var(--font-mono)" }}>{Math.round(pct)}%</span>
-                  </div>
+            {needs.slice(0, 5).map((need) => (
+              <div key={need.id} className="need-card" style={{ borderLeft: need.urgencyScore === 'Critical' ? '4px solid var(--red)' : '' }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+                  <span className="badge badge-cyan">{need.needType}</span>
+                  <span className={`badge ${need.urgencyScore === 'Critical' ? 'badge-red' : 'badge-amber'}`}>
+                    {need.urgencyScore}
+                  </span>
                 </div>
-              );
-            })}
+                <p style={{ fontSize: 13, marginBottom: 12 }}>{need.text}</p>
+                
+                <button 
+                  onClick={() => handleGetAiMatches(need.id)}
+                  className="btn-ghost" 
+                  style={{ width: '100%', fontSize: 11 }}
+                >
+                  {isMatching && selectedNeedMatches.id === need.id ? "Analyzing..." : "Find AI Best-Fit Volunteers"}
+                </button>
 
-            {/* Resource priority suggestions */}
-            {resourceSuggestions.length > 0 && (
-              <div style={{ marginTop: 4 }}>
-                <div className="mono-label" style={{ marginBottom: 10 }}>Demand Priority Scores</div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-                  {resourceSuggestions.map(([name, score]) => (
-                    <div key={name} style={{ padding: "10px 12px", background: "var(--bg-base)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-md)" }}>
-                      <div style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 4 }}>{name}</div>
-                      <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 20, color: "var(--cyan)" }}>{score}</div>
-                      <div style={{ fontSize: 10, color: "var(--text-muted)", marginTop: 2 }}>priority score</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Alerts */}
-        <div className="syn-card" style={{ padding: 0 }}>
-          <div className="syn-card-header">
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <div className="section-title" style={{ fontSize: 15 }}>Live Alerts</div>
-              {alerts.length > 0 && <span className="badge badge-red">{alerts.length} active</span>}
-            </div>
-          </div>
-          <div style={{ padding: 16, display: "flex", flexDirection: "column", gap: 10, maxHeight: 560, overflowY: "auto" }}>
-            {alerts.length === 0 && (
-              <div style={{ padding: 28, textAlign: "center", border: "1px dashed var(--border-subtle)", borderRadius: "var(--radius-md)" }}>
-                <div style={{ fontSize: 28, marginBottom: 10 }}>✅</div>
-                <p style={{ fontSize: 13, color: "var(--text-muted)" }}>No urgent alerts right now.</p>
-              </div>
-            )}
-            {alerts.map((alert) => (
-              <div key={alert.id} className="alert-card">
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, marginBottom: 8 }}>
-                  <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 14, color: "var(--text-primary)" }}>{alert.title}</div>
-                  <span className={`badge ${alert.isUrgent ? "badge-red" : "badge-amber"}`}>{alert.level}</span>
-                </div>
-                <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.65 }}>{alert.text}</p>
-                {alert.location && (
-                  <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 6 }}>
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2">
-                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
-                    </svg>
-                    <span style={{ fontSize: 11, color: "var(--text-muted)" }}>{alert.location}</span>
+                {/* Display matches if this need is selected */}
+                {selectedNeedMatches.id === need.id && (
+                  <div style={{ marginTop: 12, padding: 10, background: 'var(--bg-layer2)', borderRadius: 8 }}>
+                    <div className="mono-label" style={{ fontSize: 9 }}>AI Recommended (Sorted by Skill + Distance)</div>
+                    {selectedNeedMatches.matches.map(vol => (
+                      <div key={vol.volunteer_id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginTop: 6 }}>
+                        <span>{vol.name} ({vol.distance_km}km)</span>
+                        <span style={{ color: 'var(--cyan)' }}>{vol.hybrid_match_score}</span>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
             ))}
           </div>
         </div>
+
+        {/* Resources & Inventory */}
+        <div className="syn-card" style={{ padding: 0 }}>
+          <div className="syn-card-header">
+            <div className="section-title">Global Inventory</div>
+          </div>
+          <div style={{ padding: 16, display: "flex", flexDirection: "column", gap: 12 }}>
+            {resources.map((res) => (
+              <div key={res.id} className="resource-card">
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+                  <span style={{ fontWeight: 600 }}>{res.name}</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--cyan)' }}>{res.quantity} {res.unit}</span>
+                </div>
+                <div className="progress-bar">
+                  <div className="progress-fill" style={{ width: '70%', background: 'var(--cyan)' }} />
+                </div>
+                <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 6 }}>
+                  Location: {res.location}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
       </div>
     </div>
   );
