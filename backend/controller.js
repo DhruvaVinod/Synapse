@@ -4,6 +4,8 @@ const Volunteer = require('./models/Volunteer');
 const Resource  = require('./models/Resource');
 const axios     = require('axios');
 const { translateText }    = require('./translationService');
+const { GoogleGenAI } = require('@google/genai');
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 // REMOVED matchingService import - AI handles this now!
 const { notifyAdminsUrgent, notifyVolunteer } = require('./alertService');
@@ -161,17 +163,75 @@ exports.updateNeed = async (req, res) => {
 // VOLUNTEERS
 // ─────────────────────────────────────────────────────────────────────────────
 
+// 👉 REPLACE YOUR EXISTING VOLUNTEER CREATION FUNCTION WITH THIS:
 exports.registerVolunteer = async (req, res) => {
-  const { name, email, phone, skills, location, lat, lng } = req.body;
-  if (!name) return res.status(400).json({ error: 'Name is required' });
+  try {
+    const { name, phone, email, city, skills, max_load } = req.body;
 
-  const volunteer = await Volunteer.create({
-    name, email, phone,
-    skills:   skills   || ['general'],
-    location: location || 'Unknown',
-    lat, lng,
-  });
-  res.status(201).json({ ...volunteer.toObject(), id: volunteer._id });
+    if (!name || !phone || !city) {
+      return res.status(400).json({ error: 'Name, phone, and city are required.' });
+    }
+
+    // 1. FORCE Node.js to read the .env file right now
+    require('dotenv').config();
+
+    // 2. Debugging check: Let's prove the key is loaded
+    if (!process.env.GEMINI_API_KEY) {
+      console.error("🚨 STOP: The key is STILL missing! Check if your .env file is in the root backend folder.");
+      return res.status(500).json({ error: "Server missing API key." });
+    }
+
+    // 3. Initialize Gemini safely
+    const { GoogleGenAI } = require('@google/genai');
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+
+    // 4. Run the Geocoding Prompt
+    const prompt = `Return ONLY a valid JSON object containing 'lat' and 'lng' coordinates for the city/location: "${city}". Example: {"lat": 12.9716, "lng": 77.5946}`;
+    
+    let lat = 0.0;
+    let lng = 0.0;
+
+    try {
+      const geminiResponse = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: prompt,
+      });
+      const cleanJson = geminiResponse.text.replace(/```json|```/g, '').trim();
+      const coords = JSON.parse(cleanJson);
+      lat = coords.lat;
+      lng = coords.lng;
+    } catch (geminiError) {
+      console.error("Gemini Geocoding failed:", geminiError);
+    }
+
+    // 5. Synthesize profile text
+    const readableSkills = skills && skills.length > 0 ? skills.join(' and ') : 'general assistance';
+    const profile_text = `${name} is a volunteer located in ${city}. They provide support in ${readableSkills}.`;
+
+    // 6. Save to Database
+    const Volunteer = require('./models/Volunteer');
+    const newVolunteer = new Volunteer({
+      name,
+      phone,
+      email: email || '',
+      city,
+      lat,
+      lng,
+      skills: skills || [],
+      profile_text,
+      max_load: max_load || 3,
+      availability: true,
+      rating: 5.0, 
+      completed_count: 0
+    });
+
+    await newVolunteer.save();
+    res.status(201).json(newVolunteer);
+
+  } catch (error) {
+    console.error("Error registering volunteer:", error);
+    res.status(500).json({ error: 'Failed to register volunteer.' });
+  }
 };
 
 exports.getAllVolunteers = async (req, res) => {

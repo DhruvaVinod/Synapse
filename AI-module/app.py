@@ -1,9 +1,9 @@
+# app.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import time
 
-# FIX 1: Import the correct class name from predictor.py
 from predictor import CivicOrchestrator
 from deep_translator import GoogleTranslator
 
@@ -16,11 +16,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-print("BOOTING UP: Loading Deep Learning models into RAM (Please wait a few seconds)...")
+print("🚀 BOOTING UP: Loading Deep Learning models and MongoDB into RAM...")
 try:
-    # FIX 2: Instantiate the correct class
+    # This will now automatically trigger the MongoDB fetch when booting up!
     ai_predictor = CivicOrchestrator(model_path="new_model.pkl")
-    print("✅ AI is awake and ready to receive requests from Node.js!")
+    print("✅ AI is awake, connected to Database, and ready for Node.js requests!")
 except Exception as e:
     print(f"❌ Error loading the AI model: {e}")
     print("Make sure you have run 'python training.py' first to generate the .pkl file.")
@@ -29,8 +29,8 @@ except Exception as e:
 
 class TicketRequest(BaseModel):
     text: str
-    lat: float = None # ADD THIS
-    lng: float = None # ADD THIS
+    lat: float = None 
+    lng: float = None 
 
 class TranslateRequest(BaseModel):
     text: str
@@ -44,10 +44,10 @@ def predict_ticket(request: TicketRequest):
     """Classify a civic complaint and assign priority."""
     start = time.time()
     
-    # Pass lat and lng to the orchestrator
+    # Pass lat and lng to the orchestrator for distance math
     raw_result = ai_predictor.process_request(request.text, request.lat, request.lng)
     
-    # FIX 4: Map the Python keys to exactly what Node.js (controller.js) is expecting
+    # Map the Python keys exactly to what Node.js (controller.js) is expecting
     mapped_result = {
         "predicted_department": raw_result.get("need_detection", "General"),
         "priority_level": raw_result.get("urgency_label", "Medium"), 
@@ -88,4 +88,4 @@ def translate_text(request: TranslateRequest):
 
 @app.get("/")
 def health_check():
-    return {"status": "AI Microservice is running perfectly."}
+    return {"status": "AI Microservice is running perfectly and linked to Atlas DB."}

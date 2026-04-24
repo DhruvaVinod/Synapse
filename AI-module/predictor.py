@@ -1,12 +1,70 @@
 # predictor.py
 import joblib
 import re
+import os
 import numpy as np
+import pandas as pd
+from pymongo import MongoClient
+from dotenv import load_dotenv
 from sentence_transformers import SentenceTransformer
 from matcher import VolunteerMatcher
 
+# Load environment variables for MongoDB connection
+load_dotenv()
+# Fallback to local if no .env is found (Replace with your actual string if needed)
+MONGO_URI = os.getenv("MONGO_URI", "mongodb://synapseUser:123@ac-khawj0x-shard-00-00.sd9xbbe.mongodb.net:27017,ac-khawj0x-shard-00-01.sd9xbbe.mongodb.net:27017,ac-khawj0x-shard-00-02.sd9xbbe.mongodb.net:27017/synapse?ssl=true&replicaSet=atlas-rtsgjc-shard-0&authSource=admin&retryWrites=true&w=majority")
+
+def get_live_volunteers():
+    """Fetches live volunteer data directly from MongoDB Atlas and converts it for the AI"""
+    try:
+        print("⏳ Fetching live volunteers from MongoDB Atlas...")
+        client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
+        db = client['synapse']
+        volunteers_collection = db['volunteers']
+        
+        cursor = volunteers_collection.find({"availability": True})
+        
+        volunteers_list = []
+        for vol in cursor:
+            raw_skills = vol.get("skills", "")
+            if isinstance(raw_skills, list):
+                skills_str = ",".join(raw_skills)
+            else:
+                skills_str = str(raw_skills)
+
+            vol_name = vol.get("name", "Unknown")
+            vol_location = vol.get("location", "Unknown")
+
+            # FIX: Synthesize a profile_text paragraph for the NLP Matcher to read
+            readable_skills = skills_str.replace(",", " and ")
+            synthetic_profile = f"{vol_name} is a volunteer located in {vol_location}. They provide support in {readable_skills}."
+
+            volunteers_list.append({
+                "volunteer_id": str(vol["_id"]),
+                "name": vol_name,
+                "phone": vol.get("phone", ""),
+                "lat": vol.get("lat", 0.0),
+                "lng": vol.get("lng", 0.0),
+                "skills": skills_str,
+                "availability": True,
+                "profile_text": synthetic_profile  # Passed to the Matcher!
+            })
+            
+        if not volunteers_list:
+            print("⚠️ No active volunteers found in DB. Falling back to CSV.")
+            return pd.read_csv('volunteers.csv')
+            
+        df = pd.DataFrame(volunteers_list)
+        print(f"✅ Successfully loaded {len(df)} live volunteers from Atlas!")
+        return df
+
+    except Exception as e:
+        print(f"❌ Database Connection Error: {e}")
+        print("⚠️ Falling back to volunteers.csv")
+        return pd.read_csv('volunteers.csv')
+
 class CivicOrchestrator:
-    def __init__(self, model_path='new_model.pkl', vol_dataset='volunteers.csv'):
+    def __init__(self, model_path='new_model.pkl'):
         # 1. Load the NLP Brain
         self.encoder = SentenceTransformer('all-MiniLM-L6-v2')
         
@@ -16,9 +74,18 @@ class CivicOrchestrator:
         self.le_prio = joblib.load('le_prio.pkl')
         self.le_res = joblib.load('le_res.pkl')
         
-        # 3. Initialize Cosine Matcher with live dataset
-        self.matcher = VolunteerMatcher(vol_dataset, self.encoder)
+        # 3. Initialize Cosine Matcher with Live Atlas Dataset
+        live_vol_df = get_live_volunteers()
         
+        # Guardrail: If your VolunteerMatcher class specifically expects a CSV file path string
+        # instead of a Pandas DataFrame, this try/except safely creates a temporary CSV for it.
+        try:
+            self.matcher = VolunteerMatcher(live_vol_df, self.encoder)
+        except TypeError:
+            print("🔄 Saving live DB to temp_volunteers.csv for the Matcher module...")
+            live_vol_df.to_csv("temp_volunteers.csv", index=False)
+            self.matcher = VolunteerMatcher("temp_volunteers.csv", self.encoder)
+            
         # 4. Guardrail Pattern for override rules
         self.critical_pattern = re.compile(r'\b(?:blood|fire|trapped|killed|emergency|attack)\b', re.IGNORECASE)
 
@@ -26,24 +93,19 @@ class CivicOrchestrator:
         """
         Dynamically map the model's confidence across classes into a 1-100 numeric score.
         """
-        # le_prio.classes_ sorts alphabetically: e.g. ['Critical', 'High', 'Low', 'Medium']
-        # We need to map the respective index to a severity weight (1-100)
         class_names = self.le_prio.classes_
         weight_map = {"Low": 10, "Medium": 40, "High": 70, "Critical": 100}
         
         # Reorder weights to match the LabelEncoder's alphabetical array shape
         weights = np.array([weight_map.get(c, 50) for c in class_names])
-        
-        # Calculate expected score based on probabilities
         score = np.sum(urgency_probs * weights)
         return min(round(float(score), 1), 100.0)
 
-    # THE FIX: Added lat=None, lng=None to the signature
     def process_request(self, user_text, lat=None, lng=None):
         # Step 1: Encode Text
         embedding = self.encoder.encode([user_text])
         
-        # Step 2: Make 3-Headed Prediction
+        # Step 2: Make Prediction
         raw_pred = self.model.predict(embedding)[0]
         
         # Get Probabilities for Urgency (Target index 1)
@@ -73,18 +135,3 @@ class CivicOrchestrator:
             "resources_needed": detected_res,
             "recommended_volunteers": matched_vols
         }
-
-if __name__ == "__main__":
-    system = CivicOrchestrator()
-    
-    test_case = "Elderly man trapped due to flooding, needs immediate rescue and medical attention."
-    # Let's use some dummy coordinates for the crisis (e.g., somewhere in Delhi)
-    test_lat = 28.6139
-    test_lng = 77.2090
-    
-    print(f"\n--- Processing Crisis: '{test_case}' ---")
-    
-    # Pass the dummy coordinates into the function
-    output = system.process_request(test_case, lat=test_lat, lng=test_lng)
-    import json
-    print(json.dumps(output, indent=2))

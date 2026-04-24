@@ -1,0 +1,191 @@
+volunteer_id,name,phone,lat,lng,skills,availability,profile_text
+69ebaa55f22b29bbc890b844,Shreua,7338583996,0.0,0.0,shelter,True,Shreua is a volunteer located in Mangalore. They provide support in shelter.
+69ebaa97f22b29bbc890b84f,Priya,333333333,0.0,0.0,medical,True,Priya is a volunteer located in Delhi. They provide support in medical.
+69ebb637d97b0b41f173a91e,Rajesh Patil,9131994523,20.7318,78.58559,medical,True,Rajesh Patil is a volunteer located in Unknown. They provide support in medical.
+69ebb637d97b0b41f173a91f,Neha Bhosale,9914763202,20.71572,77.00637,"food,education",True,Neha Bhosale is a volunteer located in Unknown. They provide support in food and education.
+69ebb637d97b0b41f173a920,Girish Gaikwad,9384027113,18.96873,73.14493,"hygiene,disaster relief",True,Girish Gaikwad is a volunteer located in Unknown. They provide support in hygiene and disaster relief.
+69ebb637d97b0b41f173a921,Umesh Kale,9174684276,19.09019,72.91621,"food,education",True,Umesh Kale is a volunteer located in Unknown. They provide support in food and education.
+69ebb637d97b0b41f173a922,Sapna Bhat,9324956459,21.17491,79.10952,medical,True,Sapna Bhat is a volunteer located in Unknown. They provide support in medical.
+69ebb637d97b0b41f173a923,Sachin Shah,9838908273,19.30908,73.06505,"elderly support,medical",True,Sachin Shah is a volunteer located in Unknown. They provide support in elderly support and medical.
+69ebb637d97b0b41f173a925,Neha Nair,9902099969,20.52294,76.20907,"medical,disaster relief",True,Neha Nair is a volunteer located in Unknown. They provide support in medical and disaster relief.
+69ebb637d97b0b41f173a926,Girish Shetty,9773715057,21.00166,75.54576,"elderly support,medical",True,Girish Shetty is a volunteer located in Unknown. They provide support in elderly support and medical.
+69ebb637d97b0b41f173a927,Girish Yadav,9831980933,19.14749,72.94795,"medical,disaster relief",True,Girish Yadav is a volunteer located in Unknown. They provide support in medical and disaster relief.
+69ebb637d97b0b41f173a928,Sachin Bhat,9918150683,16.98061,73.29961,"elderly support,medical",True,Sachin Bhat is a volunteer located in Unknown. They provide support in elderly support and medical.
+69ebb637d97b0b41f173a929,Anita Naik,9669462919,18.97691,75.76854,"disaster relief,medical",True,Anita Naik is a volunteer located in Unknown. They provide support in disaster relief and medical.
+69ebb637d97b0b41f173a92a,Manisha Wagh,9885879795,18.99051,72.80658,"shelter,disaster relief",True,Manisha Wagh is a volunteer located in Unknown. They provide support in shelter and disaster relief.
+69ebb637d97b0b41f173a92c,Sneha Shah,9463016614,21.14414,79.1265,"hygiene,medical",True,Sneha Shah is a volunteer located in Unknown. They provide support in hygiene and medical.
+69ebb637d97b0b41f173a92d,Sapna Chavan,9399012686,19.18873,72.99057,disaster relief,True,Sapna Chavan is a volunteer located in Unknown. They provide support in disaster relief.
+69ebb637d97b0b41f173a92e,Bharat Salve,9201281557,20.15884,80.03193,"hygiene,shelter",True,Bharat Salve is a volunteer located in Unknown. They provide support in hygiene and shelter.
+69ebb637d97b0b41f173a92f,Nisha Mane,9464323393,18.40347,76.58223,disaster relief,True,Nisha Mane is a volunteer located in Unknown. They provide support in disaster relief.
+69ebb637d97b0b41f173a930,Shilpa Salve,9205128697,19.08818,72.88651,"elderly support,medical",True,Shilpa Salve is a volunteer located in Unknown. They provide support in elderly support and medical.
+69ebb637d97b0b41f173a931,Sunita Desai,9519212169,20.40972,78.10038,"medical,disaster relief",True,Sunita Desai is a volunteer located in Unknown. They provide support in medical and disaster relief.
+69ebb637d97b0b41f173a932,Umesh Kulkarni,9721890096,18.4206,76.57423,"food,education",True,Umesh Kulkarni is a volunteer located in Unknown. They provide support in food and education.
+69ebb637d97b0b41f173a934,Arun Mehta,9726713347,19.23793,73.162,"hygiene,shelter",True,Arun Mehta is a volunteer located in Unknown. They provide support in hygiene and shelter.
+69ebb637d97b0b41f173a935,Akash Pillai,9907308348,19.19666,73.10267,"hygiene,food",True,Akash Pillai is a volunteer located in Unknown. They provide support in hygiene and food.
+69ebb637d97b0b41f173a936,Sunita Deshpande,9362298393,19.12511,74.77927,medical,True,Sunita Deshpande is a volunteer located in Unknown. They provide support in medical.
+69ebb637d97b0b41f173a938,Anita Shetty,9838194420,19.17307,72.87178,"food,education",True,Anita Shetty is a volunteer located in Unknown. They provide support in food and education.
+69ebb637d97b0b41f173a939,Jyoti Nimbalkar,9927982963,20.51427,76.20869,disaster relief,True,Jyoti Nimbalkar is a volunteer located in Unknown. They provide support in disaster relief.
+69ebb637d97b0b41f173a93a,Jyoti Kamble,9138684919,20.74181,78.61454,"food,education",True,Jyoti Kamble is a volunteer located in Unknown. They provide support in food and education.
+69ebb637d97b0b41f173a93f,Priya More,9568574364,19.19511,73.11745,"shelter,disaster relief",True,Priya More is a volunteer located in Unknown. They provide support in shelter and disaster relief.
+69ebb637d97b0b41f173a940,Rajesh Thorat,9891388192,20.5393,74.48156,"disaster relief,education",True,Rajesh Thorat is a volunteer located in Unknown. They provide support in disaster relief and education.
+69ebb637d97b0b41f173a941,Sneha Mane,9644518647,18.383,76.57025,"hygiene,disaster relief",True,Sneha Mane is a volunteer located in Unknown. They provide support in hygiene and disaster relief.
+69ebb637d97b0b41f173a942,Sandesh Gaikwad,9760904107,16.71683,74.24656,"disaster relief,food",True,Sandesh Gaikwad is a volunteer located in Unknown. They provide support in disaster relief and food.
+69ebb637d97b0b41f173a943,Vishal Thorat,9574765466,21.48052,80.18513,"disaster relief,food",True,Vishal Thorat is a volunteer located in Unknown. They provide support in disaster relief and food.
+69ebb637d97b0b41f173a944,Neha Nimbalkar,9200273738,19.73532,77.17709,"elderly support,medical",True,Neha Nimbalkar is a volunteer located in Unknown. They provide support in elderly support and medical.
+69ebb637d97b0b41f173a945,Rupa Bhosale,9718121922,19.06484,72.88087,"medical,disaster relief",True,Rupa Bhosale is a volunteer located in Unknown. They provide support in medical and disaster relief.
+69ebb637d97b0b41f173a947,Geeta Shinde,9440696084,21.44545,80.2178,"medical,disaster relief",True,Geeta Shinde is a volunteer located in Unknown. They provide support in medical and disaster relief.
+69ebb637d97b0b41f173a948,Girish Reddy,9659741412,21.45725,80.17645,"medical,disaster relief",True,Girish Reddy is a volunteer located in Unknown. They provide support in medical and disaster relief.
+69ebb637d97b0b41f173a949,Nitin Pawar,9511281012,18.16065,76.02904,"shelter,disaster relief",True,Nitin Pawar is a volunteer located in Unknown. They provide support in shelter and disaster relief.
+69ebb637d97b0b41f173a94a,Lata Shah,9727150493,19.17845,72.83906,"food,education",True,Lata Shah is a volunteer located in Unknown. They provide support in food and education.
+69ebb637d97b0b41f173a94b,Ajay Naik,9686405096,20.39334,78.11902,"hygiene,medical",True,Ajay Naik is a volunteer located in Unknown. They provide support in hygiene and medical.
+69ebb637d97b0b41f173a94c,Amit Wagh,9237039296,19.20468,72.97724,"medical,education",True,Amit Wagh is a volunteer located in Unknown. They provide support in medical and education.
+69ebb637d97b0b41f173a94d,Priya Pillai,9507059676,16.71051,74.25308,medical,True,Priya Pillai is a volunteer located in Unknown. They provide support in medical.
+69ebb637d97b0b41f173a950,Dinesh Wagh,9871330207,17.50756,73.54107,"medical,disaster relief",True,Dinesh Wagh is a volunteer located in Unknown. They provide support in medical and disaster relief.
+69ebb637d97b0b41f173a951,Prakash Kulkarni,9181600593,19.05772,72.95873,"hygiene,shelter",True,Prakash Kulkarni is a volunteer located in Unknown. They provide support in hygiene and shelter.
+69ebb637d97b0b41f173a955,Manisha Naik,9130816384,19.26354,73.1107,"medical,disaster relief",True,Manisha Naik is a volunteer located in Unknown. They provide support in medical and disaster relief.
+69ebb637d97b0b41f173a956,Manisha Kamble,9305145276,20.51193,76.20207,"hygiene,disaster relief",True,Manisha Kamble is a volunteer located in Unknown. They provide support in hygiene and disaster relief.
+69ebb637d97b0b41f173a957,Nitin Joshi,9534222401,16.85171,74.59699,"medical,disaster relief",True,Nitin Joshi is a volunteer located in Unknown. They provide support in medical and disaster relief.
+69ebb637d97b0b41f173a958,Shilpa Kulkarni,9587205269,17.53559,73.5126,"elderly support,food",True,Shilpa Kulkarni is a volunteer located in Unknown. They provide support in elderly support and food.
+69ebb637d97b0b41f173a959,Rupa Pawar,9893070706,19.19554,72.95966,medical,True,Rupa Pawar is a volunteer located in Unknown. They provide support in medical.
+69ebb637d97b0b41f173a95b,Dinesh Pawar,9405307028,19.14206,72.8729,"elderly support,medical",True,Dinesh Pawar is a volunteer located in Unknown. They provide support in elderly support and medical.
+69ebb637d97b0b41f173a95c,Lalita Deshpande,9837071174,19.85726,75.31638,"medical,disaster relief",True,Lalita Deshpande is a volunteer located in Unknown. They provide support in medical and disaster relief.
+69ebb637d97b0b41f173a95d,Lata Jadhav,9342329714,20.58485,74.48401,"hygiene,food",True,Lata Jadhav is a volunteer located in Unknown. They provide support in hygiene and food.
+69ebb637d97b0b41f173a95e,Siddharth Deshpande,9918982730,18.17384,76.04721,"disaster relief,education",True,Siddharth Deshpande is a volunteer located in Unknown. They provide support in disaster relief and education.
+69ebb637d97b0b41f173a95f,Neha Pawar,9412737284,17.50557,73.49859,"food,education",True,Neha Pawar is a volunteer located in Unknown. They provide support in food and education.
+69ebb637d97b0b41f173a960,Sapna Kulkarni,9556489494,19.35166,72.84738,medical,True,Sapna Kulkarni is a volunteer located in Unknown. They provide support in medical.
+69ebb637d97b0b41f173a961,Amit Nair,9409893263,19.1885,72.8686,medical,True,Amit Nair is a volunteer located in Unknown. They provide support in medical.
+69ebb637d97b0b41f173a962,Pooja Deshpande,9888699799,19.40895,72.79135,"shelter,disaster relief",True,Pooja Deshpande is a volunteer located in Unknown. They provide support in shelter and disaster relief.
+69ebb637d97b0b41f173a963,Rahul Patil,9143198431,19.05634,72.89306,"hygiene,shelter",True,Rahul Patil is a volunteer located in Unknown. They provide support in hygiene and shelter.
+69ebb637d97b0b41f173a964,Yogesh Nimbalkar,9457887167,16.98673,73.29869,"hygiene,shelter",True,Yogesh Nimbalkar is a volunteer located in Unknown. They provide support in hygiene and shelter.
+69ebb637d97b0b41f173a966,Rashmi Naik,9635252889,20.7291,76.97277,"food,education",True,Rashmi Naik is a volunteer located in Unknown. They provide support in food and education.
+69ebb637d97b0b41f173a967,Harish Bhat,9753770973,19.10191,72.84935,"shelter,disaster relief",True,Harish Bhat is a volunteer located in Unknown. They provide support in shelter and disaster relief.
+69ebb637d97b0b41f173a968,Sunita Kale,9413383963,16.82799,74.61104,medical,True,Sunita Kale is a volunteer located in Unknown. They provide support in medical.
+69ebb637d97b0b41f173a969,Sachin Sawant,9174958005,19.74651,77.13412,"food,education",True,Sachin Sawant is a volunteer located in Unknown. They provide support in food and education.
+69ebb637d97b0b41f173a96c,Meena Gaikwad,9139749508,20.74368,78.62701,"medical,education",True,Meena Gaikwad is a volunteer located in Unknown. They provide support in medical and education.
+69ebb637d97b0b41f173a971,Asha Kamble,9784944881,19.03664,72.92125,"disaster relief,medical",True,Asha Kamble is a volunteer located in Unknown. They provide support in disaster relief and medical.
+69ebb637d97b0b41f173a972,Umesh Pawar,9421214426,17.50126,73.53248,"shelter,disaster relief",True,Umesh Pawar is a volunteer located in Unknown. They provide support in shelter and disaster relief.
+69ebb637d97b0b41f173a975,Vikram Yadav,9573330302,19.22507,73.10296,"elderly support,medical",True,Vikram Yadav is a volunteer located in Unknown. They provide support in elderly support and medical.
+69ebb637d97b0b41f173a976,Omkar Joshi,9669998399,19.16261,72.83611,"disaster relief,education",True,Omkar Joshi is a volunteer located in Unknown. They provide support in disaster relief and education.
+69ebb637d97b0b41f173a978,Amit Naik,9588322781,19.31365,73.0873,"food,education",True,Amit Naik is a volunteer located in Unknown. They provide support in food and education.
+69ebb637d97b0b41f173a979,Jyoti Chavan,9452194058,17.69985,75.93282,medical,True,Jyoti Chavan is a volunteer located in Unknown. They provide support in medical.
+69ebb637d97b0b41f173a97a,Arun Nair,9224683417,19.16286,77.30913,"disaster relief,education",True,Arun Nair is a volunteer located in Unknown. They provide support in disaster relief and education.
+69ebb637d97b0b41f173a97b,Nitin Shetty,9206323670,20.15904,80.00302,"food,education",True,Nitin Shetty is a volunteer located in Unknown. They provide support in food and education.
+69ebb637d97b0b41f173a97d,Swati Shinde,9154308262,16.69155,74.27139,"medical,disaster relief",True,Swati Shinde is a volunteer located in Unknown. They provide support in medical and disaster relief.
+69ebb637d97b0b41f173a97e,Shilpa Jadhav,9946799779,20.54021,74.52869,"food,education",True,Shilpa Jadhav is a volunteer located in Unknown. They provide support in food and education.
+69ebb637d97b0b41f173a97f,Ramesh Pawar,9946571918,19.19325,72.85141,"elderly support,medical",True,Ramesh Pawar is a volunteer located in Unknown. They provide support in elderly support and medical.
+69ebb637d97b0b41f173a980,Manisha Patil,9651085057,19.04782,72.87661,"disaster relief,education",True,Manisha Patil is a volunteer located in Unknown. They provide support in disaster relief and education.
+69ebb637d97b0b41f173a981,Anita Deshpande,9531233244,20.69289,77.00961,"elderly support,food",True,Anita Deshpande is a volunteer located in Unknown. They provide support in elderly support and food.
+69ebb637d97b0b41f173a982,Anita Wagh,9728530544,19.38928,72.80021,medical,True,Anita Wagh is a volunteer located in Unknown. They provide support in medical.
+69ebb637d97b0b41f173a983,Manisha Thorat,9925667446,21.36853,74.23052,"disaster relief,medical",True,Manisha Thorat is a volunteer located in Unknown. They provide support in disaster relief and medical.
+69ebb637d97b0b41f173a984,Neha Sawant,9373685835,18.20929,76.03673,"medical,disaster relief",True,Neha Sawant is a volunteer located in Unknown. They provide support in medical and disaster relief.
+69ebb637d97b0b41f173a985,Lata Mehta,9164404084,19.69173,77.16941,medical,True,Lata Mehta is a volunteer located in Unknown. They provide support in medical.
+69ebb637d97b0b41f173a988,Priya Yadav,9253815116,17.55047,73.50025,"elderly support,medical",True,Priya Yadav is a volunteer located in Unknown. They provide support in elderly support and medical.
+69ebb637d97b0b41f173a989,Rashmi Desai,9497341481,19.17846,72.87731,medical,True,Rashmi Desai is a volunteer located in Unknown. They provide support in medical.
+69ebb637d97b0b41f173a98a,Manisha Bhat,9810751262,20.56367,74.5319,"elderly support,medical",True,Manisha Bhat is a volunteer located in Unknown. They provide support in elderly support and medical.
+69ebb637d97b0b41f173a98b,Bharat Yadav,9622517939,18.18085,76.02483,"elderly support,food",True,Bharat Yadav is a volunteer located in Unknown. They provide support in elderly support and food.
+69ebb637d97b0b41f173a98c,Rupa Shinde,9452318696,19.21202,72.98406,"medical,disaster relief",True,Rupa Shinde is a volunteer located in Unknown. They provide support in medical and disaster relief.
+69ebb637d97b0b41f173a98d,Ramesh Wagh,9526351920,20.74114,78.57995,"food,education",True,Ramesh Wagh is a volunteer located in Unknown. They provide support in food and education.
+69ebb637d97b0b41f173a98e,Nisha Patil,9534900128,19.16357,77.34273,"hygiene,shelter",True,Nisha Patil is a volunteer located in Unknown. They provide support in hygiene and shelter.
+69ebb637d97b0b41f173a98f,Umesh Reddy,9900801837,19.44589,72.77249,medical,True,Umesh Reddy is a volunteer located in Unknown. They provide support in medical.
+69ebb637d97b0b41f173a990,Amit Gaikwad,9975139327,21.14679,79.65063,medical,True,Amit Gaikwad is a volunteer located in Unknown. They provide support in medical.
+69ebb637d97b0b41f173a993,Vishal Iyer,9182389284,18.99489,73.10862,medical,True,Vishal Iyer is a volunteer located in Unknown. They provide support in medical.
+69ebb637d97b0b41f173a995,Manisha Yadav,9641755366,19.71778,77.17696,"medical,disaster relief",True,Manisha Yadav is a volunteer located in Unknown. They provide support in medical and disaster relief.
+69ebb637d97b0b41f173a996,Sunil Shinde,9538912794,19.25616,73.16496,"elderly support,food",True,Sunil Shinde is a volunteer located in Unknown. They provide support in elderly support and food.
+69ebb637d97b0b41f173a997,Vijay Iyer,9747145068,18.99784,75.73415,medical,True,Vijay Iyer is a volunteer located in Unknown. They provide support in medical.
+69ebb637d97b0b41f173a999,Siddharth Nair,9431642423,19.89499,75.35351,"elderly support,food",True,Siddharth Nair is a volunteer located in Unknown. They provide support in elderly support and food.
+69ebb637d97b0b41f173a99a,Neha Gaikwad,9996703082,21.16588,79.63359,"elderly support,medical",True,Neha Gaikwad is a volunteer located in Unknown. They provide support in elderly support and medical.
+69ebb637d97b0b41f173a99b,Suresh Mehta,9874364348,19.89878,75.35038,"disaster relief,medical",True,Suresh Mehta is a volunteer located in Unknown. They provide support in disaster relief and medical.
+69ebb637d97b0b41f173a99c,Meena Sawant,9432288618,18.53098,73.84095,"medical,disaster relief",True,Meena Sawant is a volunteer located in Unknown. They provide support in medical and disaster relief.
+69ebb637d97b0b41f173a99e,Nanda Naik,9190060226,19.18753,73.08854,"hygiene,medical",True,Nanda Naik is a volunteer located in Unknown. They provide support in hygiene and medical.
+69ebb637d97b0b41f173a9a1,Nanda Bhat,9753780028,19.36285,72.83272,medical,True,Nanda Bhat is a volunteer located in Unknown. They provide support in medical.
+69ebb637d97b0b41f173a9a2,Girish More,9998386592,21.15399,79.63807,disaster relief,True,Girish More is a volunteer located in Unknown. They provide support in disaster relief.
+69ebb637d97b0b41f173a9a3,Ajay Nair,9813363254,20.7141,77.01581,"shelter,disaster relief",True,Ajay Nair is a volunteer located in Unknown. They provide support in shelter and disaster relief.
+69ebb637d97b0b41f173a9a5,Madhuri Mane,9889401015,19.22924,73.08113,medical,True,Madhuri Mane is a volunteer located in Unknown. They provide support in medical.
+69ebb637d97b0b41f173a9a7,Arun Shah,9653388913,21.19332,79.62222,"disaster relief,food",True,Arun Shah is a volunteer located in Unknown. They provide support in disaster relief and food.
+69ebb637d97b0b41f173a9a9,Nisha Shetty,9386389162,16.7196,74.26698,"medical,education",True,Nisha Shetty is a volunteer located in Unknown. They provide support in medical and education.
+69ebb637d97b0b41f173a9aa,Girish Desai,9578798403,18.41495,76.57974,"food,education",True,Girish Desai is a volunteer located in Unknown. They provide support in food and education.
+69ebb637d97b0b41f173a9ab,Girish Kamble,9180574838,19.41733,72.79403,"hygiene,medical",True,Girish Kamble is a volunteer located in Unknown. They provide support in hygiene and medical.
+69ebb637d97b0b41f173a9ac,Rashmi Mane,9353398109,20.72767,77.01346,"medical,disaster relief",True,Rashmi Mane is a volunteer located in Unknown. They provide support in medical and disaster relief.
+69ebb637d97b0b41f173a9ad,Omkar Mane,9716243819,17.70747,75.87834,"elderly support,medical",True,Omkar Mane is a volunteer located in Unknown. They provide support in elderly support and medical.
+69ebb637d97b0b41f173a9ae,Omkar Thorat,9226444910,20.94637,77.76458,medical,True,Omkar Thorat is a volunteer located in Unknown. They provide support in medical.
+69ebb637d97b0b41f173a9af,Jyoti Shah,9577934499,18.16887,76.04861,"medical,disaster relief",True,Jyoti Shah is a volunteer located in Unknown. They provide support in medical and disaster relief.
+69ebb637d97b0b41f173a9b1,Omkar Nimbalkar,9601873197,19.19558,72.96016,"elderly support,medical",True,Omkar Nimbalkar is a volunteer located in Unknown. They provide support in elderly support and medical.
+69ebb637d97b0b41f173a9b2,Dinesh Yadav,9789705810,19.04654,72.87649,"medical,disaster relief",True,Dinesh Yadav is a volunteer located in Unknown. They provide support in medical and disaster relief.
+69ebb637d97b0b41f173a9b3,Sarita Deshpande,9992699085,19.30124,73.0362,"food,education",True,Sarita Deshpande is a volunteer located in Unknown. They provide support in food and education.
+69ebb637d97b0b41f173a9b4,Lata Kulkarni,9310777576,19.21042,72.88278,"hygiene,food",True,Lata Kulkarni is a volunteer located in Unknown. They provide support in hygiene and food.
+69ebb637d97b0b41f173a9b5,Archana Jadhav,9770529419,18.97717,75.76221,"elderly support,food",True,Archana Jadhav is a volunteer located in Unknown. They provide support in elderly support and food.
+69ebb637d97b0b41f173a9b6,Varsha Reddy,9923515952,20.53037,74.53073,medical,True,Varsha Reddy is a volunteer located in Unknown. They provide support in medical.
+69ebb637d97b0b41f173a9b7,Komal Yadav,9536038528,18.96082,75.78354,"food,education",True,Komal Yadav is a volunteer located in Unknown. They provide support in food and education.
+69ebb637d97b0b41f173a9b8,Umesh Desai,9442863363,19.39429,72.79358,"medical,disaster relief",True,Umesh Desai is a volunteer located in Unknown. They provide support in medical and disaster relief.
+69ebb637d97b0b41f173a9b9,Rashmi Jadhav,9154337019,20.38103,78.1241,"hygiene,disaster relief",True,Rashmi Jadhav is a volunteer located in Unknown. They provide support in hygiene and disaster relief.
+69ebb637d97b0b41f173a9bb,Geeta Wagh,9154267347,21.15004,79.0916,"medical,education",True,Geeta Wagh is a volunteer located in Unknown. They provide support in medical and education.
+69ebb637d97b0b41f173a9bd,Meena Thorat,9986171278,19.12392,72.82808,"food,education",True,Meena Thorat is a volunteer located in Unknown. They provide support in food and education.
+69ebb637d97b0b41f173a9be,Pooja Jadhav,9530986098,19.04663,72.95069,"hygiene,disaster relief",True,Pooja Jadhav is a volunteer located in Unknown. They provide support in hygiene and disaster relief.
+69ebb637d97b0b41f173a9bf,Meena Shinde,9442019016,19.09182,72.85968,"medical,disaster relief",True,Meena Shinde is a volunteer located in Unknown. They provide support in medical and disaster relief.
+69ebb637d97b0b41f173a9c3,Vikram Patil,9881042056,18.17482,76.02099,"disaster relief,food",True,Vikram Patil is a volunteer located in Unknown. They provide support in disaster relief and food.
+69ebb637d97b0b41f173a9c4,Nanda Nimbalkar,9467570835,19.20825,72.87449,"medical,disaster relief",True,Nanda Nimbalkar is a volunteer located in Unknown. They provide support in medical and disaster relief.
+69ebb637d97b0b41f173a9c5,Swati Mehta,9341449138,21.18876,79.66084,"shelter,disaster relief",True,Swati Mehta is a volunteer located in Unknown. They provide support in shelter and disaster relief.
+69ebb637d97b0b41f173a9c6,Kiran Shah,9715766024,19.21601,72.84394,"medical,disaster relief",True,Kiran Shah is a volunteer located in Unknown. They provide support in medical and disaster relief.
+69ebb637d97b0b41f173a9c7,Siddharth Shetty,9804344630,16.7241,74.27058,"elderly support,medical",True,Siddharth Shetty is a volunteer located in Unknown. They provide support in elderly support and medical.
+69ebb637d97b0b41f173a9c8,Lalita Salve,9360337343,19.10568,72.89437,"food,education",True,Lalita Salve is a volunteer located in Unknown. They provide support in food and education.
+69ebb637d97b0b41f173a9c9,Sapna Shinde,9536913550,19.0478,72.94604,medical,True,Sapna Shinde is a volunteer located in Unknown. They provide support in medical.
+69ebb637d97b0b41f173a9ca,Yogesh Wagh,9674615376,16.97217,73.33983,"hygiene,disaster relief",True,Yogesh Wagh is a volunteer located in Unknown. They provide support in hygiene and disaster relief.
+69ebb637d97b0b41f173a9cc,Vishal Chavan,9641394238,21.34314,74.26228,"shelter,disaster relief",True,Vishal Chavan is a volunteer located in Unknown. They provide support in shelter and disaster relief.
+69ebb637d97b0b41f173a9cd,Sachin Salve,9824132709,19.05164,72.93737,"shelter,disaster relief",True,Sachin Salve is a volunteer located in Unknown. They provide support in shelter and disaster relief.
+69ebb637d97b0b41f173a9ce,Sunil Yadav,9612662437,19.01282,75.77982,"elderly support,food",True,Sunil Yadav is a volunteer located in Unknown. They provide support in elderly support and food.
+69ebb637d97b0b41f173a9d0,Nitin Shinde,9226074193,17.50779,73.50261,"medical,education",True,Nitin Shinde is a volunteer located in Unknown. They provide support in medical and education.
+69ebb637d97b0b41f173a9d1,Smita Mane,9689736058,19.07845,74.77694,"medical,disaster relief",True,Smita Mane is a volunteer located in Unknown. They provide support in medical and disaster relief.
+69ebb637d97b0b41f173a9d2,Neha Bhat,9220483278,19.25452,73.14125,medical,True,Neha Bhat is a volunteer located in Unknown. They provide support in medical.
+69ebb637d97b0b41f173a9d3,Sneha Chavan,9648011361,20.15989,79.99549,"elderly support,food",True,Sneha Chavan is a volunteer located in Unknown. They provide support in elderly support and food.
+69ebb637d97b0b41f173a9d4,Kavita Deshpande,9373221357,19.18799,72.84581,disaster relief,True,Kavita Deshpande is a volunteer located in Unknown. They provide support in disaster relief.
+69ebb637d97b0b41f173a9d5,Neha Chavan,9134075063,19.12712,72.93287,medical,True,Neha Chavan is a volunteer located in Unknown. They provide support in medical.
+69ebb637d97b0b41f173a9d6,Sandesh Kamble,9503346325,21.14483,79.65849,"disaster relief,education",True,Sandesh Kamble is a volunteer located in Unknown. They provide support in disaster relief and education.
+69ebb637d97b0b41f173a9d7,Nanda Nair,9124411864,19.97462,73.81937,"medical,education",True,Nanda Nair is a volunteer located in Unknown. They provide support in medical and education.
+69ebb637d97b0b41f173a9d8,Geeta Mehta,9921938559,19.28387,72.87082,"hygiene,food",True,Geeta Mehta is a volunteer located in Unknown. They provide support in hygiene and food.
+69ebb637d97b0b41f173a9d9,Suresh Iyer,9821579885,17.52585,73.53016,"medical,disaster relief",True,Suresh Iyer is a volunteer located in Unknown. They provide support in medical and disaster relief.
+69ebb637d97b0b41f173a9db,Akash Chavan,9422660441,21.38305,74.2524,"hygiene,food",True,Akash Chavan is a volunteer located in Unknown. They provide support in hygiene and food.
+69ebb637d97b0b41f173a9dc,Kavita Kale,9509261668,21.03048,75.58729,"disaster relief,education",True,Kavita Kale is a volunteer located in Unknown. They provide support in disaster relief and education.
+69ebb637d97b0b41f173a9de,Sandesh Sawant,9675134276,21.4623,80.19021,"shelter,disaster relief",True,Sandesh Sawant is a volunteer located in Unknown. They provide support in shelter and disaster relief.
+69ebb637d97b0b41f173a9df,Vijay Pawar,9614745610,17.69092,75.91258,medical,True,Vijay Pawar is a volunteer located in Unknown. They provide support in medical.
+69ebb637d97b0b41f173a9e0,Tushar Kulkarni,9319594317,19.02421,72.8345,medical,True,Tushar Kulkarni is a volunteer located in Unknown. They provide support in medical.
+69ebb637d97b0b41f173a9e1,Nitin Kale,9600368062,20.95393,77.77244,"food,education",True,Nitin Kale is a volunteer located in Unknown. They provide support in food and education.
+69ebb637d97b0b41f173a9e2,Yogesh Bhat,9694113766,20.96226,77.77184,"disaster relief,education",True,Yogesh Bhat is a volunteer located in Unknown. They provide support in disaster relief and education.
+69ebb637d97b0b41f173a9e4,Bharat Deshpande,9662581035,19.24467,72.84783,"elderly support,medical",True,Bharat Deshpande is a volunteer located in Unknown. They provide support in elderly support and medical.
+69ebb637d97b0b41f173a9e6,Pallavi Shinde,9117959560,19.10346,74.77553,"medical,disaster relief",True,Pallavi Shinde is a volunteer located in Unknown. They provide support in medical and disaster relief.
+69ebb637d97b0b41f173a9e9,Manoj Nair,9188783547,17.00578,73.28761,"medical,education",True,Manoj Nair is a volunteer located in Unknown. They provide support in medical and education.
+69ebb637d97b0b41f173a9eb,Sachin Shinde,9730325223,19.16547,72.92902,"food,education",True,Sachin Shinde is a volunteer located in Unknown. They provide support in food and education.
+69ebb637d97b0b41f173a9ed,Nilesh Shinde,9450444259,19.04923,72.95332,"hygiene,disaster relief",True,Nilesh Shinde is a volunteer located in Unknown. They provide support in hygiene and disaster relief.
+69ebb637d97b0b41f173a9ee,Sachin Iyer,9764233758,18.18544,76.03325,"medical,education",True,Sachin Iyer is a volunteer located in Unknown. They provide support in medical and education.
+69ebb637d97b0b41f173a9ef,Shilpa Shah,9577531502,19.12932,72.92145,"elderly support,medical",True,Shilpa Shah is a volunteer located in Unknown. They provide support in elderly support and medical.
+69ebb637d97b0b41f173a9f0,Sachin More,9199926988,19.16244,72.84426,"food,education",True,Sachin More is a volunteer located in Unknown. They provide support in food and education.
+69ebb637d97b0b41f173a9f2,Nanda Pawar,9370260533,21.1363,79.09496,"elderly support,medical",True,Nanda Pawar is a volunteer located in Unknown. They provide support in elderly support and medical.
+69ebb637d97b0b41f173a9f3,Sneha Deshpande,9975610118,19.03113,72.90341,"medical,education",True,Sneha Deshpande is a volunteer located in Unknown. They provide support in medical and education.
+69ebb637d97b0b41f173a9f4,Nanda Kulkarni,9779573843,20.94359,77.79132,"medical,disaster relief",True,Nanda Kulkarni is a volunteer located in Unknown. They provide support in medical and disaster relief.
+69ebb637d97b0b41f173a9f5,Shilpa Gaikwad,9831983367,17.66732,75.92355,"hygiene,medical",True,Shilpa Gaikwad is a volunteer located in Unknown. They provide support in hygiene and medical.
+69ebb637d97b0b41f173a9f7,Girish Iyer,9949030118,17.65494,75.93584,"medical,disaster relief",True,Girish Iyer is a volunteer located in Unknown. They provide support in medical and disaster relief.
+69ebb637d97b0b41f173a9f8,Manoj More,9908186980,21.15159,79.65988,"elderly support,medical",True,Manoj More is a volunteer located in Unknown. They provide support in elderly support and medical.
+69ebb637d97b0b41f173a9f9,Nisha More,9597210335,19.01742,72.83642,"elderly support,food",True,Nisha More is a volunteer located in Unknown. They provide support in elderly support and food.
+69ebb637d97b0b41f173a9fa,Lata Mane,9588909690,19.01277,72.80253,medical,True,Lata Mane is a volunteer located in Unknown. They provide support in medical.
+69ebb637d97b0b41f173a9fb,Yogesh More,9795752405,18.19932,76.03905,medical,True,Yogesh More is a volunteer located in Unknown. They provide support in medical.
+69ebb637d97b0b41f173a9fc,Usha Pillai,9776199993,20.72993,78.58267,"elderly support,medical",True,Usha Pillai is a volunteer located in Unknown. They provide support in elderly support and medical.
+69ebb637d97b0b41f173a9ff,Bharat Nimbalkar,9858049231,18.9778,75.75352,"medical,education",True,Bharat Nimbalkar is a volunteer located in Unknown. They provide support in medical and education.
+69ebb637d97b0b41f173aa00,Manoj Mehta,9248033880,19.17599,72.83271,medical,True,Manoj Mehta is a volunteer located in Unknown. They provide support in medical.
+69ebb637d97b0b41f173aa01,Madhuri Sawant,9765086407,19.0611,72.90124,"elderly support,medical",True,Madhuri Sawant is a volunteer located in Unknown. They provide support in elderly support and medical.
+69ebb637d97b0b41f173aa02,Swati Patil,9576582183,20.50739,76.20311,"food,education",True,Swati Patil is a volunteer located in Unknown. They provide support in food and education.
+69ebb637d97b0b41f173aa03,Usha Desai,9707362554,20.52975,74.52456,"shelter,disaster relief",True,Usha Desai is a volunteer located in Unknown. They provide support in shelter and disaster relief.
+69ebb637d97b0b41f173aa04,Rajesh Chavan,9556506372,19.04787,72.92609,"hygiene,medical",True,Rajesh Chavan is a volunteer located in Unknown. They provide support in hygiene and medical.
+69ebb637d97b0b41f173aa06,Nilesh Naik,9476685251,19.37132,72.82149,"disaster relief,medical",True,Nilesh Naik is a volunteer located in Unknown. They provide support in disaster relief and medical.
+69ebb637d97b0b41f173aa07,Archana Yadav,9975293837,20.161,80.03454,"shelter,disaster relief",True,Archana Yadav is a volunteer located in Unknown. They provide support in shelter and disaster relief.
+69ebb637d97b0b41f173aa08,Sandesh Pillai,9917626034,19.14925,72.86842,"elderly support,medical",True,Sandesh Pillai is a volunteer located in Unknown. They provide support in elderly support and medical.
+69ebb637d97b0b41f173aa09,Pranav Wagh,9398742558,19.16865,72.83512,"disaster relief,education",True,Pranav Wagh is a volunteer located in Unknown. They provide support in disaster relief and education.
+69ebb637d97b0b41f173aa0a,Pallavi Deshpande,9954352670,20.51884,76.15435,medical,True,Pallavi Deshpande is a volunteer located in Unknown. They provide support in medical.
+69ebb637d97b0b41f173aa0c,Vijay Shinde,9317237515,19.06057,72.9532,"medical,disaster relief",True,Vijay Shinde is a volunteer located in Unknown. They provide support in medical and disaster relief.
+69ebb637d97b0b41f173aa0d,Dinesh Shetty,9277731206,16.97831,73.33447,"shelter,disaster relief",True,Dinesh Shetty is a volunteer located in Unknown. They provide support in shelter and disaster relief.
+69ebb637d97b0b41f173aa0e,Pranav Nair,9242485313,21.16376,79.13151,"disaster relief,education",True,Pranav Nair is a volunteer located in Unknown. They provide support in disaster relief and education.
+69ebb637d97b0b41f173aa11,Sunita Yadav,9333264702,16.97005,73.30307,"disaster relief,food",True,Sunita Yadav is a volunteer located in Unknown. They provide support in disaster relief and food.
+69ebb637d97b0b41f173aa13,Kiran Bhat,9793819512,19.39231,72.81802,"shelter,disaster relief",True,Kiran Bhat is a volunteer located in Unknown. They provide support in shelter and disaster relief.
+69ebb637d97b0b41f173aa14,Nitin Wagh,9241715543,17.65726,75.90637,"disaster relief,medical",True,Nitin Wagh is a volunteer located in Unknown. They provide support in disaster relief and medical.
+69ebb637d97b0b41f173aa15,Komal Mane,9947493681,20.19188,80.02156,medical,True,Komal Mane is a volunteer located in Unknown. They provide support in medical.
+69ebb637d97b0b41f173aa16,Kiran Nair,9432759989,19.36476,72.82073,"medical,education",True,Kiran Nair is a volunteer located in Unknown. They provide support in medical and education.
+69ebb637d97b0b41f173aa17,Rohit Iyer,9566523205,19.16618,72.84244,medical,True,Rohit Iyer is a volunteer located in Unknown. They provide support in medical.
+69ebd8446bfbc72df581c461,Jane,75748393857,0.0,0.0,medical,True,Jane is a volunteer located in Unknown. They provide support in medical.
