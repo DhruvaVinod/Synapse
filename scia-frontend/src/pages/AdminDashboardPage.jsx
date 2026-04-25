@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { PieChart, Pie, Cell, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
 
-const API_BASE_URL = "http://localhost:5001";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5001";
 const RESOURCE_KEY = "synapse-resources";
 
 const STATUS_COLORS = { Detected: "#f59e0b", "In Progress": "#00d4ff", Completed: "#10d470" };

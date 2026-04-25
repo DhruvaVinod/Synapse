@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:5001";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5001";
 
 const STATIC_RESOURCES = [
   { id: "r1", name: "Food Kits",        quantity: 120,    unit: "kits",     available: true, used: 38,    location: "Thrissur Warehouse, Kerala",    category: "Food"       },

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSearchParams } from "react-router-dom";
 
-const API_BASE_URL = "http://localhost:5001";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5001";
 
 function getDisplayStatus(item) {
   if (item.status === "Resolved") return "Completed";if (item.status === "Resolved" || item.status === "Completed") return "Completed";
