@@ -6,13 +6,12 @@ const API_BASE_URL = "http://localhost:5001";
 
 function getDisplayStatus(item) {
   if (item.status === "Resolved") return "Completed";if (item.status === "Resolved" || item.status === "Completed") return "Completed";
-  if (item.status === "Assigned") return "Assigned";
   if (item.adminReply) return "In Progress";
   return "Detected";
 }
 
-const STEPS = ["Detected", "Assigned", "In Progress", "Completed"];
-const STEP_IDX = { Detected: 0, Assigned: 1, "In Progress": 2, Completed: 3 };
+const STEPS = ["Detected", "In Progress", "Completed"];
+const STEP_IDX = { Detected: 0, "In Progress": 1, Completed: 2 };
 
 function TrackComplaintPage() {
   const [searchParams] = useSearchParams();

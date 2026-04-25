@@ -289,18 +289,7 @@ function VolunteerHubPage() {
                     ))}
                   </div>
 
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
-                    {[
-                      { label: "Active Load", value: `${vol.current_load || 0} / ${vol.max_load || 3}`, color: "var(--cyan)" },
-                      { label: "Completed", value: vol.completed_count || 0, color: "var(--green)" },
-                      { label: "Rating", value: `${vol.rating?.toFixed(1) || "5.0"}/5`, color: "var(--amber)" },
-                    ].map((m) => (
-                      <div key={m.label} style={{ background: "var(--bg-base)", border: "1px solid var(--border-subtle)", borderRadius: 8, padding: "8px 10px" }}>
-                        <div style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 4 }}>{m.label}</div>
-                        <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 16, color: m.color }}>{m.value}</div>
-                      </div>
-                    ))}
-                  </div>
+                  
                 </div>
               );
             })}
