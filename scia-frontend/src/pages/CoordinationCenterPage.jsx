@@ -125,27 +125,16 @@ function NeedCard({ need, navigate }) {
           <span className="badge" style={{ background: `${uColor}15`, border: `1px solid ${uColor}40`, color: uColor, fontSize: 9 }}>
             {(need.priority || need.urgencyScore || "—").toUpperCase()}
           </span>
-<<<<<<< HEAD
-          <span className="badge" style={{
-            fontSize: 9,
-            background: status === "Completed" ? "rgba(16,212,112,0.12)" : status === "In Progress" ? "rgba(0,212,255,0.12)" : "rgba(245,158,11,0.12)",
-            border: `1px solid ${status === "Completed" ? "rgba(16,212,112,0.3)" : status === "In Progress" ? "rgba(0,212,255,0.3)" : "rgba(245,158,11,0.3)"}`,
-            color: status === "Completed" ? "var(--green)" : status === "In Progress" ? "var(--cyan)" : "var(--amber)",
-          }}>
-            {status.toUpperCase()}
-          </span>
           {vStatus && (
             <span className="badge" style={{
-              fontSize: 9,
               background: `${vColor}15`,
               border: `1px solid ${vColor}40`,
               color: vColor,
+              fontSize: 9,
             }}>
               {vStatus.toUpperCase()}
             </span>
           )}
-=======
->>>>>>> f54af58058c64afb4d3e48153adc0c93ca2b0185
         </div>
       </div>
 
