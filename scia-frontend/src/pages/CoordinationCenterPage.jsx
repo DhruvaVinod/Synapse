@@ -125,6 +125,7 @@ function NeedCard({ need, navigate }) {
           <span className="badge" style={{ background: `${uColor}15`, border: `1px solid ${uColor}40`, color: uColor, fontSize: 9 }}>
             {(need.priority || need.urgencyScore || "—").toUpperCase()}
           </span>
+<<<<<<< HEAD
           <span className="badge" style={{
             fontSize: 9,
             background: status === "Completed" ? "rgba(16,212,112,0.12)" : status === "In Progress" ? "rgba(0,212,255,0.12)" : "rgba(245,158,11,0.12)",
@@ -143,6 +144,8 @@ function NeedCard({ need, navigate }) {
               {vStatus.toUpperCase()}
             </span>
           )}
+=======
+>>>>>>> f54af58058c64afb4d3e48153adc0c93ca2b0185
         </div>
       </div>
 
@@ -241,7 +244,7 @@ function CoordinationCenterPage() {
   const overallPct = Math.round((usedResourceUnits / Math.max(totalResourceUnits, 1)) * 100);
 
   const stats = [
-    { label: "Active Alerts",       value: activeNeeds.length,                          color: "var(--amber)" },
+    { label: "Active Alerts",       value: activeNeeds.length + 1,                          color: "var(--amber)" },
     { label: "High Urgency",        value: highUrgency.length,                          color: "var(--red)"   },
     { label: "Volunteers",          value: volunteers.length,                            color: "var(--cyan)"  },
     { label: "Available Resources", value: resources.filter((r) => r.available).length, color: "var(--green)" },
@@ -301,9 +304,6 @@ function CoordinationCenterPage() {
           <div style={{ padding: "14px 18px", borderBottom: "1px solid var(--border-subtle)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
               <div className="section-title">Active Response Queue</div>
-              {activeNeeds.length > 0 && (
-                <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-muted)" }}>{activeNeeds.length} open</span>
-              )}
             </div>
             <div style={{ display: "flex", gap: 5 }}>
               {NEED_FILTERS.map((f) => (

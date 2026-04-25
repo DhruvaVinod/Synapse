@@ -345,9 +345,6 @@ function AssignVolunteersPanel({ needs, volunteers, onAssigned }) {
                     {/* STATS ROW */}
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 6 }}>
                       <div style={{ display: "flex", gap: 12, fontSize: 11, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
-                        <span>
-                          Load: <span style={{ color: loadColor, fontWeight: 700 }}>{vol.current_load || 0}/{vol.max_load || 3}</span>
-                        </span>
                         <span>⭐ {(vol.rating || 5.0).toFixed(1)}</span>
                         {vol.distance_km != null && (
                           <span>📍 {Number(vol.distance_km).toFixed(1)} km</span>
