@@ -1,3 +1,4 @@
+require('dotenv').config();
 require('dns').setDefaultResultOrder('ipv4first');
 const express    = require('express');
 const http       = require('http');
@@ -6,7 +7,6 @@ const bodyParser = require('body-parser');
 const cors       = require('cors');
 const routes     = require('./routes');
 const alertService = require('./alertService');
-require('dotenv').config();
 
 const app    = express();
 const server = http.createServer(app);

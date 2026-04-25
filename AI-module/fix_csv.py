@@ -5,16 +5,16 @@ df = pd.read_csv('volunteers.csv')
 
 # Dictionary mapping your old CSV skills to the strict 7 AI categories
 skill_mapping = {
-    'medical_aid': 'medical',
-    'first_aid': 'medical',
-    'counselling': 'medical',
-    'teaching': 'education',
-    'food_distribution': 'food',
-    'sanitation': 'hygiene',
-    'logistics': 'disaster relief',
-    'rescue': 'disaster relief',
-    'elderly_care': 'elderly support',
-    'shelter_construction': 'shelter'
+    'medical_aid': 'Medical',
+    'first_aid': 'Medical',
+    'counselling': 'Medical',
+    'teaching': 'Education',
+    'food_distribution': 'Food',
+    'sanitation': 'Hygiene',
+    'logistics': 'Disaster relief',
+    'rescue': 'Disaster relief',
+    'elderly_care': 'Elderly support',
+    'shelter_construction': 'Shelter'
 }
 
 # Function to translate old comma-separated strings to the new format

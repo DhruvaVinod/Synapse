@@ -62,83 +62,82 @@ exports.createNeed = async (req, res) => {
   const {
     text, location, citizenName,
     lat, lng, originalLang,
-    reporterType,
-    resourcesRequired,
+    reporterType, resourcesRequired,
   } = req.body;
-
+ 
   if (!text) return res.status(400).json({ error: 'Text is required' });
-
-  // 1. Translate to English for AI
+ 
+  // 1. Translate if needed
   let englishText = text;
   if (originalLang && originalLang !== 'en') {
-    console.log(`🌐 Translating from ${originalLang} to English...`);
-    englishText = await translateText(text, originalLang, 'en');
-    console.log(`✅ Translated: "${englishText}"`);
+    try {
+      englishText = await translateText(text, originalLang, 'en');
+    } catch (e) {
+      console.error('Translation failed:', e.message);
+    }
   }
-
-  // 2. AI classification & Volunteer Matching
-  let needType = 'General', urgencyScore = 'Low', aiResources = "General", aiMatches = [];
+ 
   const safeLat = lat || 28.6139;
   const safeLng = lng || 77.2090;
-
+ 
+  // 2. AI classification (with robust fallback)
+  let needType = 'General', urgencyScore = 'Medium', aiResources = '', aiMatches = [];
+ 
   try {
-    // Send text AND coordinates to the Python AI Module
-    const mlRes = await axios.post('http://127.0.0.1:8000/predict', { 
-        text: englishText,
-        lat: safeLat,
-        lng: safeLng
+    const mlRes = await axios.post('http://127.0.0.1:8000/predict', {
+      text: englishText, lat: safeLat, lng: safeLng,
     });
-    
-    needType     = mlRes.data.prediction.predicted_department;
-    urgencyScore = mlRes.data.prediction.priority_level;
-    aiResources  = mlRes.data.prediction.resources_needed;
-    aiMatches    = mlRes.data.prediction.recommended_volunteers;
-    
+    needType     = mlRes.data.prediction.predicted_department || 'General';
+    urgencyScore = mlRes.data.prediction.priority_level       || 'Medium';
+    aiResources  = mlRes.data.prediction.resources_needed     || '';
+    aiMatches    = mlRes.data.prediction.recommended_volunteers || [];
   } catch (err) {
-    console.error("⚠️ AI Module unreachable, using fallbacks:", err.message);
-    // Fallback rules
-    if      (/water|leak|pipe/i.test(englishText))                                             needType = 'Water';
-    else if (/light|power|electric|current/i.test(englishText))                               needType = 'Electricity';
-    else if (/dog|cat|animal|stray/i.test(englishText))                                       needType = 'Animal';
-    else if (/waste|garbage|dirty|smell/i.test(englishText))                                  needType = 'Sanitation';
-    else if (/disaster|fire|volcano|tornado|cyclone|tsunami|earthquake|flood/i.test(englishText)) needType = 'Disaster';
-    else if (/food|hunger|starv/i.test(englishText))                                          needType = 'Food';
-    else if (/hospital|medic|doctor|injur|sick/i.test(englishText))                           needType = 'Health';
-
+    console.error('⚠️ AI Module unreachable, using fallbacks:', err.message);
+    // Keyword fallback — always sets needType
+    if      (/water|leak|pipe/i.test(englishText))                                                needType = 'Water';
+    else if (/light|power|electric|current/i.test(englishText))                                  needType = 'Electricity';
+    else if (/waste|garbage|dirty|smell|sanit/i.test(englishText))                               needType = 'Sanitation';
+    else if (/disaster|fire|flood|cyclone|earthquake|tsunami|tornado/i.test(englishText))        needType = 'Disaster';
+    else if (/food|hunger|starv/i.test(englishText))                                             needType = 'Food';
+    else if (/hospital|medic|doctor|injur|sick/i.test(englishText))                              needType = 'Health';
+    else if (/road|pothole|bridge/i.test(englishText))                                           needType = 'Roads';
+    else if (/shelter|homeless/i.test(englishText))                                              needType = 'Shelter';
+    else                                                                                          needType = 'General';
+ 
     urgencyScore = /urgent|emergency|critical|severe/i.test(englishText) ? 'High' : 'Medium';
   }
-
-  // 3. Save
+ 
+  // 3. Normalize priority (AI sometimes returns 'Critical')
+  const priority = urgencyScore === 'Critical' ? 'High' : urgencyScore;
+ 
+  // 4. Save
   const need = await Need.create({
     text,
     originalText: originalLang && originalLang !== 'en' ? text : null,
     originalLang: originalLang || 'en',
     needType,
-    category:     needType,
+    category:     needType,   // ← always set, never undefined
     urgencyScore,
-    priority:     urgencyScore === 'Critical' ? 'High' : urgencyScore,
-    location:     location   || 'Unknown',
+    priority,
+    location:     location    || 'Unknown',
     citizenName:  citizenName || 'Anonymous',
-    reporterType: reporterType === "citizen report" ? "citizen" : (reporterType || "citizen"),
+    reporterType: reporterType === 'citizen report' ? 'citizen' : (reporterType || 'citizen'),
     status:       'Detected',
     lat:          safeLat,
     lng:          safeLng,
-    resourcesRequired: resourcesRequired || [], // Save the AI suggested resources
+    resourcesRequired: resourcesRequired || [],
   });
-
-  // 4. Real-time alert to admins if urgent
+ 
   notifyAdminsUrgent(need);
-
-  // Return the created need PLUS the AI's instant volunteer recommendations
-  // THE FIX: Add aiSuggestedResources to the output
-  res.status(201).json({ 
-      ...need.toObject(), 
-      id: need._id, 
-      suggestedVolunteers: aiMatches,
-      aiSuggestedResources: aiResources 
+ 
+  res.status(201).json({
+    ...need.toObject(),
+    id:                  need._id,
+    suggestedVolunteers: aiMatches,
+    aiSuggestedResources: aiResources,
   });
 };
-
+ 
 exports.getNeedById = async (req, res) => {
   const need = await Need.findById(req.params.id)
     .populate('assignedVolunteers', 'name skills phone')
@@ -154,8 +153,22 @@ exports.updateNeed = async (req, res) => {
   if (status)                   update.status     = status;
   if (status === 'Completed')   update.closedAt   = new Date();
 
+  // Fetch BEFORE update to get assignedVolunteers while they still exist
+  const existingNeed = await Need.findById(req.params.id).lean();
+  if (!existingNeed) return res.status(404).json({ error: 'Not found' });
+
   const need = await Need.findByIdAndUpdate(req.params.id, update, { new: true });
-  if (!need) return res.status(404).json({ error: 'Not found' });
+
+  // Decrement load + increment completed for all assigned volunteers
+  if (status === 'Completed' && existingNeed.assignedVolunteers?.length) {
+    for (const vid of existingNeed.assignedVolunteers) {
+      await Volunteer.findByIdAndUpdate(vid, {
+        $inc: { current_load: -1, completed_count: 1 },
+        $pull: { assignedNeeds: existingNeed._id },
+      });
+    }
+  }
+
   res.json({ ...need.toObject(), id: need._id });
 };
 
@@ -163,35 +176,23 @@ exports.updateNeed = async (req, res) => {
 // VOLUNTEERS
 // ─────────────────────────────────────────────────────────────────────────────
 
-// 👉 REPLACE YOUR EXISTING VOLUNTEER CREATION FUNCTION WITH THIS:
 exports.registerVolunteer = async (req, res) => {
   try {
     const { name, phone, email, city, skills, max_load } = req.body;
-
+ 
     if (!name || !phone || !city) {
       return res.status(400).json({ error: 'Name, phone, and city are required.' });
     }
-
-    // 1. FORCE Node.js to read the .env file right now
-    require('dotenv').config();
-
-    // 2. Debugging check: Let's prove the key is loaded
-    if (!process.env.GEMINI_API_KEY) {
-      console.error("🚨 STOP: The key is STILL missing! Check if your .env file is in the root backend folder.");
-      return res.status(500).json({ error: "Server missing API key." });
-    }
-
-    // 3. Initialize Gemini safely
-    const { GoogleGenAI } = require('@google/genai');
-    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-
-    // 4. Run the Geocoding Prompt
-    const prompt = `Return ONLY a valid JSON object containing 'lat' and 'lng' coordinates for the city/location: "${city}". Example: {"lat": 12.9716, "lng": 77.5946}`;
-    
-    let lat = 0.0;
-    let lng = 0.0;
-
+ 
+    // FIX: normalize skills to lowercase so they match the Mongoose enum
+    const normalizedSkills = (skills || []).map((s) =>
+      typeof s === 'string' ? s.toLowerCase() : s
+    );
+ 
+    // Geocode city with Gemini
+    let lat = 0.0, lng = 0.0;
     try {
+      const prompt = `Return ONLY a valid JSON object containing 'lat' and 'lng' coordinates for the city/location: "${city}". Example: {"lat": 12.9716, "lng": 77.5946}`;
       const geminiResponse = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
         contents: prompt,
@@ -201,15 +202,14 @@ exports.registerVolunteer = async (req, res) => {
       lat = coords.lat;
       lng = coords.lng;
     } catch (geminiError) {
-      console.error("Gemini Geocoding failed:", geminiError);
+      console.error('Gemini Geocoding failed:', geminiError.message);
     }
-
-    // 5. Synthesize profile text
-    const readableSkills = skills && skills.length > 0 ? skills.join(' and ') : 'general assistance';
+ 
+    const readableSkills = normalizedSkills.length > 0
+      ? normalizedSkills.join(' and ')
+      : 'general assistance';
     const profile_text = `${name} is a volunteer located in ${city}. They provide support in ${readableSkills}.`;
-
-    // 6. Save to Database
-    const Volunteer = require('./models/Volunteer');
+ 
     const newVolunteer = new Volunteer({
       name,
       phone,
@@ -217,45 +217,21 @@ exports.registerVolunteer = async (req, res) => {
       city,
       lat,
       lng,
-      skills: skills || [],
+      skills: normalizedSkills,   // ← lowercase
       profile_text,
       max_load: max_load || 3,
       availability: true,
-      rating: 5.0, 
-      completed_count: 0
+      rating: 5.0,
+      completed_count: 0,
     });
-
+ 
     await newVolunteer.save();
     res.status(201).json(newVolunteer);
-
+ 
   } catch (error) {
-    console.error("Error registering volunteer:", error);
-    res.status(500).json({ error: 'Failed to register volunteer.' });
+    console.error('Error registering volunteer:', error);
+    res.status(500).json({ error: 'Failed to register volunteer.', detail: error.message });
   }
-};
-
-exports.getAllVolunteers = async (req, res) => {
-  const volunteers = await Volunteer.find()
-    .sort({ createdAt: -1 })
-    .populate('assignedNeeds', 'needType urgencyScore status')
-    .lean();
-  res.json(volunteers.map((v) => ({ ...v, id: v._id })));
-};
-
-exports.getVolunteerById = async (req, res) => {
-  const v = await Volunteer.findById(req.params.id)
-    .populate('assignedNeeds', 'needType urgencyScore status location')
-    .lean();
-  if (!v) return res.status(404).json({ error: 'Not found' });
-  res.json({ ...v, id: v._id });
-};
-
-exports.toggleVolunteerAvailability = async (req, res) => {
-  const v = await Volunteer.findById(req.params.id);
-  if (!v) return res.status(404).json({ error: 'Not found' });
-  v.availability = !v.availability;
-  await v.save();
-  res.json({ id: v._id, availability: v.availability });
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -306,7 +282,10 @@ exports.assignVolunteers = async (req, res) => {
   await need.save();
 
   for (const vid of toAdd) {
-    await Volunteer.findByIdAndUpdate(vid, { $addToSet: { assignedNeeds: needId } });
+    await Volunteer.findByIdAndUpdate(vid, {
+      $addToSet: { assignedNeeds: needId },
+      $inc: { current_load: 1 },            // ← must be present
+    });
     notifyVolunteer(vid, need);
   }
 
@@ -398,4 +377,34 @@ exports.adminLogin = (req, res) => {
   } else {
     res.status(401).json({ error: 'Wrong password' });
   }
+};
+
+exports.getAllVolunteers = async (req, res) => {
+  const volunteers = await Volunteer.find()
+    .sort({ createdAt: -1 })
+    .populate('assignedNeeds', 'needType urgencyScore status')
+    .lean();
+ 
+  res.json(
+    volunteers.map((v) => ({
+      ...v,
+      id: v._id,
+      // FIX: guarantee skills is always an array of strings
+      skills: Array.isArray(v.skills) ? v.skills : [],
+    }))
+  );
+};
+ 
+exports.getVolunteerById = async (req, res) => {
+  const volunteer = await Volunteer.findById(req.params.id).lean();
+  if (!volunteer) return res.status(404).json({ error: 'Not found' });
+  res.json({ ...volunteer, id: volunteer._id });
+};
+
+exports.toggleVolunteerAvailability = async (req, res) => {
+  const volunteer = await Volunteer.findById(req.params.id);
+  if (!volunteer) return res.status(404).json({ error: 'Not found' });
+  volunteer.availability = !volunteer.availability;
+  await volunteer.save();
+  res.json({ ...volunteer.toObject(), id: volunteer._id });
 };

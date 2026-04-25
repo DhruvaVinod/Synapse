@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = "http://localhost:5001";
 
 const LANGUAGES = [
   { label: "English", speechCode: "en-IN", isoCode: "en" },
@@ -197,7 +197,7 @@ function RegisterComplaintPage() {
         {/* Left: form */}
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           <div className="syn-card" style={{ padding: 20 }}>
-            <div className="section-title" style={{ fontSize: 15, marginBottom: 16 }}>Input Configuration</div>
+            <div className="section-title" style={{ fontSize: 15, marginBottom: 16 }}>Report The Need</div>
 
             {/* Language + Source */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
@@ -254,7 +254,7 @@ function RegisterComplaintPage() {
 
             {/* Location */}
             <div style={{ marginBottom: 14, position: "relative" }} ref={suggestionsRef}>
-              <label className="syn-label">Location</label>
+              <label className="syn-label">Location * mandatory</label>
               <input
                 type="text" value={locationInput} onChange={handleLocationInput}
                 placeholder="Start typing area, street, landmark, or village…"
@@ -313,7 +313,6 @@ function RegisterComplaintPage() {
           <div className="syn-card" style={{ padding: 0 }}>
             <div style={{ padding: "14px 18px", borderBottom: "1px solid var(--border-subtle)" }}>
               <div className="section-title" style={{ fontSize: 14 }}>Intelligence Preview</div>
-              <p style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 4 }}>Updates as you type · Rule + ML hybrid</p>
             </div>
             <div style={{ padding: 16, display: "flex", flexDirection: "column", gap: 12 }}>
               <div style={{ padding: "12px 14px", background: "var(--bg-layer1)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-md)" }}>
@@ -339,17 +338,6 @@ function RegisterComplaintPage() {
                   {predictedResources.map((r) => <span key={r} className="syn-tag" style={{ fontSize: 10 }}>{r}</span>)}
                 </div>
               </div>
-
-              <div style={{ padding: "12px 14px", background: "var(--bg-layer1)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-md)" }}>
-                <div className="mono-label" style={{ marginBottom: 8 }}>Action Flow</div>
-                <div style={{ display: "flex", gap: 5 }}>
-                  {["Detected","Assigned","In Progress","Completed"].map((s, i) => (
-                    <span key={s} style={{ flex: 1, textAlign: "center", padding: "4px 0", borderRadius: 4, fontSize: 9, fontFamily: "var(--font-mono)", background: i === 0 ? "rgba(0,212,255,0.15)" : "var(--bg-layer3)", border: `1px solid ${i === 0 ? "rgba(0,212,255,0.35)" : "var(--border-subtle)"}`, color: i === 0 ? "var(--cyan)" : "var(--text-muted)" }}>
-                      {s}
-                    </span>
-                  ))}
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -373,29 +361,6 @@ function RegisterComplaintPage() {
                   {submitResult.priority} Urgency
                 </span>
                 <span className="badge badge-cyan">Detected</span>
-              </div>
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 16 }}>
-              {[
-                ["Need Type", submitResult.predictedNeedType],
-                ["Source", submitResult.source],
-                ["Impacted", submitResult.impactCount || "—"],
-                ["Status", "Queued for action"],
-              ].map(([label, value]) => (
-                <div key={label} style={{ padding: "12px 14px", background: "var(--bg-layer1)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-md)" }}>
-                  <div className="mono-label" style={{ marginBottom: 6 }}>{label}</div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text-primary)" }}>{value}</div>
-                </div>
-              ))}
-            </div>
-            <div style={{ padding: "12px 14px", background: "var(--bg-layer1)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-md)", marginBottom: 12 }}>
-              <div className="mono-label" style={{ marginBottom: 6 }}>Description</div>
-              <p style={{ fontSize: 13, color: "var(--text-primary)", lineHeight: 1.7 }}>{submitResult.displayText}</p>
-            </div>
-            <div style={{ padding: "12px 14px", background: "var(--bg-layer1)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-md)" }}>
-              <div className="mono-label" style={{ marginBottom: 8 }}>Suggested Resources</div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                {submitResult.predictedResources.map((r) => <span key={r} className="syn-tag">{r}</span>)}
               </div>
             </div>
           </div>
