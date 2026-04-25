@@ -94,6 +94,13 @@ function NeedCard({ need, navigate }) {
   const status  = getDisplayStatus(need);
   const uColor  = urgencyColor(need.priority || need.urgencyScore);
   const icon    = CATEGORY_ICONS[need.category || need.needType] || "📋";
+  const vStatus = need.verificationStatus;
+  const vColor  =
+    vStatus === "Likely Genuine"
+      ? "var(--green)"
+      : vStatus === "Likely Fake"
+        ? "var(--red)"
+        : "var(--amber)";
 
   return (
     <div style={{
@@ -126,12 +133,41 @@ function NeedCard({ need, navigate }) {
           }}>
             {status.toUpperCase()}
           </span>
+          {vStatus && (
+            <span className="badge" style={{
+              fontSize: 9,
+              background: `${vColor}15`,
+              border: `1px solid ${vColor}40`,
+              color: vColor,
+            }}>
+              {vStatus.toUpperCase()}
+            </span>
+          )}
         </div>
       </div>
 
       <p style={{ fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: 10 }}>
         {(need.text || "").slice(0, 160)}{(need.text || "").length > 160 ? "…" : ""}
       </p>
+
+      {vStatus && (
+        <div style={{
+          marginBottom: 10,
+          padding: "8px 10px",
+          background: "var(--bg-layer2)",
+          border: "1px solid var(--border-subtle)",
+          borderRadius: 8,
+        }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: 10, color: vColor, fontFamily: "var(--font-mono)", fontWeight: 700 }}>
+              VERIFY {need.verificationScore ?? 0}/100
+            </span>
+            <span style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
+              {need.similarComplaintCount || 0} nearby reports
+            </span>
+          </div>
+        </div>
+      )}
 
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <button

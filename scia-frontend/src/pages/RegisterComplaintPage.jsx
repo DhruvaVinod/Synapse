@@ -162,15 +162,18 @@ function RegisterComplaintPage() {
     const res = await axios.post(`${API_BASE_URL}/api/needs`, payload);
     
     // The response now contains AI-calculated volunteers and resources
-    setSubmitResult({
-      ...res.data,
-      id: res.data.id.slice(-6),
-      // Use the AI's predicted values returned from the backend
-      priority: res.data.priority_level,
-      predictedNeedType: res.data.predicted_department,
-      predictedResources: [res.data.aiSuggestedResources],
-      suggestedVolunteers: res.data.suggestedVolunteers
-    });
+  setSubmitResult({
+    ...res.data,
+    id: res.data.id.slice(-6),
+    priority: res.data.priority || res.data.urgencyScore,
+    predictedNeedType: res.data.needType || res.data.category,
+    predictedResources: [res.data.aiSuggestedResources].filter(Boolean),
+    suggestedVolunteers: res.data.suggestedVolunteers || [],
+    verificationStatus: res.data.verificationStatus,
+    verificationScore: res.data.verificationScore,
+    verificationReasons: res.data.verificationReasons || [],
+    similarComplaintCount: res.data.similarComplaintCount || 0,
+  });
   } catch (err) {
     setError("Integration Error: Ensure both Node and Python servers are running.");
   } finally {
@@ -361,6 +364,11 @@ function RegisterComplaintPage() {
                   {submitResult.priority} Urgency
                 </span>
                 <span className="badge badge-cyan">Detected</span>
+                {submitResult?.verificationStatus && (
+  <span className="badge">
+    {submitResult.verificationStatus}
+  </span>
+)}
               </div>
             </div>
           </div>

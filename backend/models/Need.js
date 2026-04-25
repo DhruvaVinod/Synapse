@@ -38,6 +38,32 @@ const needSchema = new mongoose.Schema(
     // The AI returns a raw string of resources, while the frontend might send an array.
     resourcesRequired: { type: mongoose.Schema.Types.Mixed, default: [] },
 
+    // trying the new feature for checking ... verification status doing 
+    verificationStatus: {
+      type: String,
+      enum: ['Pending', 'Likely Genuine', 'Needs Review', 'Likely Fake'],
+      default: 'Pending',
+    },
+
+    verificationScore: {
+      type: Number,
+      default: 0,
+    },
+
+    verificationReasons: {
+      type: [String],
+      default: [],
+    },
+
+    similarComplaintCount: {
+      type: Number,
+      default: 0,
+    },
+
+    verifiedAt: {
+      type: Date,
+      default: null,
+    },
     adminReply: { type: String, default: '' },
     closedAt:   { type: Date, default: null },
   },

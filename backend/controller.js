@@ -5,7 +5,9 @@ const Resource  = require('./models/Resource');
 const axios     = require('axios');
 const { translateText }    = require('./translationService');
 const { GoogleGenAI } = require('@google/genai');
+const { verifyNeed } = require('./verificationService');
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const AI_URL = process.env.AI_BASE_URL || "http://127.0.0.1:8000";
 
 // REMOVED matchingService import - AI handles this now!
 const { notifyAdminsUrgent, notifyVolunteer } = require('./alertService');
@@ -84,7 +86,7 @@ exports.createNeed = async (req, res) => {
   let needType = 'General', urgencyScore = 'Medium', aiResources = '', aiMatches = [];
  
   try {
-    const mlRes = await axios.post('http://127.0.0.1:8000/predict', {
+    const mlRes = await axios.post(`${AI_URL}/predict`, {
       text: englishText, lat: safeLat, lng: safeLng,
     });
     needType     = mlRes.data.prediction.predicted_department || 'General';
@@ -127,14 +129,25 @@ exports.createNeed = async (req, res) => {
     lng:          safeLng,
     resourcesRequired: resourcesRequired || [],
   });
+  let verification = null;
+
+  try {
+    verification = await verifyNeed(need);
+
+    Object.assign(need, verification);
+    await need.save();
+  } catch (verificationError) {
+    console.error('Verification failed:', verificationError.message);
+  }
  
   notifyAdminsUrgent(need);
  
   res.status(201).json({
     ...need.toObject(),
-    id:                  need._id,
+    id: need._id,
     suggestedVolunteers: aiMatches,
     aiSuggestedResources: aiResources,
+    verification,
   });
 };
  
@@ -252,7 +265,7 @@ exports.getMatchSuggestions = async (req, res) => {
 
   try {
       // Ask the Python AI for live match suggestions based on the saved need
-      const mlRes = await axios.post('http://127.0.0.1:8000/predict', { 
+      const mlRes = await axios.post(`${AI_URL}/predict`, {
           text: need.originalLang === 'en' ? need.text : (need.originalText || need.text),
           lat: need.lat,
           lng: need.lng

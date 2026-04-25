@@ -52,6 +52,11 @@ function TrackComplaintPage() {
     if (u === "Medium") return "var(--amber)";
     return "var(--green)";
   };
+  const verificationColor = (status) => {
+  if (status === "Likely Genuine") return "var(--green)";
+  if (status === "Likely Fake") return "var(--red)";
+  return "var(--amber)";
+};
 
   return (
     <div style={{ maxWidth: 780 }} className="animate-fade-up">
@@ -121,6 +126,18 @@ function TrackComplaintPage() {
                 <span className={`badge ${displayStatus === "Completed" ? "badge-green" : displayStatus === "In Progress" ? "badge-blue" : "badge-amber"}`}>
                   {displayStatus}
                 </span>
+                {result.verificationStatus && (
+  <span
+    className="badge"
+    style={{
+      background: `${verificationColor(result.verificationStatus)}15`,
+      border: `1px solid ${verificationColor(result.verificationStatus)}40`,
+      color: verificationColor(result.verificationStatus),
+    }}
+  >
+    {result.verificationStatus}
+  </span>
+)}
               </div>
             </div>
           </div>
@@ -141,6 +158,30 @@ function TrackComplaintPage() {
               )}
             </div>
           </div>
+          {result.verificationStatus && (
+  <div className="syn-card" style={{ padding: 18 }}>
+    <div className="mono-label" style={{ marginBottom: 8 }}>
+      Verification Check
+    </div>
+
+    <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 10 }}>
+      <span className="syn-tag">
+        Score: {result.verificationScore}/100
+      </span>
+      <span className="syn-tag">
+        Similar nearby reports: {result.similarComplaintCount || 0}
+      </span>
+    </div>
+
+    {result.verificationReasons?.length > 0 && (
+      <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.6 }}>
+        {result.verificationReasons.map((reason, idx) => (
+          <li key={idx}>{reason}</li>
+        ))}
+      </ul>
+    )}
+  </div>
+)}
 
           {/* Description */}
           <div className="syn-card" style={{ padding: 18 }}>
